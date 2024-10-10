@@ -426,7 +426,7 @@ get_file_func (CameraFilesystem *fs, const char *folder, const char *filename,
 		gpi_jpeg_destroy(myjpeg);
 		free (tempchunk);
 		break;
-    	}
+	}
 	return (GP_OK);
 }
 
@@ -504,9 +504,9 @@ camera_init (Camera *camera, GPContext *context)
 	CameraAbilities abilities;
 	int result;
 
-        /* First, set up all the function pointers */
+	/* First, set up all the function pointers */
 	camera->functions->exit		= camera_exit;
-        camera->functions->about        = camera_about;
+	camera->functions->about        = camera_about;
 	camera->functions->summary      = camera_summary;
 
 	/* Now, tell the filesystem where to get lists and info */

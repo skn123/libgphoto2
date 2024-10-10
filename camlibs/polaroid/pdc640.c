@@ -912,13 +912,13 @@ camera_capture (Camera *camera, CameraCaptureType type, CameraFilePath *path,
 		return (GP_ERROR);
 
 	/* Set the filename */
-        sprintf (path->name, camera->pl->filespec, num);
-        strcpy (path->folder, "/");
+	sprintf (path->name, camera->pl->filespec, num);
+	strcpy (path->folder, "/");
 
 	CHECK_RESULT (gp_filesystem_append (camera->fs, "/", path->name,
-					    context));
+		context));
 
-        return (GP_OK);
+	return (GP_OK);
 }
 
 static int
@@ -975,10 +975,8 @@ get_info_func (CameraFilesystem *fs, const char *folder, const char *file,
 static int
 camera_exit (Camera *camera, GPContext *context)
 {
-	if (camera->pl) {
-		free (camera->pl);
-		camera->pl = NULL;
-	}
+	free (camera->pl);
+	camera->pl = NULL;
 
 	return (GP_OK);
 }

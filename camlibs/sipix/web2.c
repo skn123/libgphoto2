@@ -493,7 +493,7 @@ camera_abilities (CameraAbilitiesList *list)
 static int
 camera_exit (Camera *camera, GPContext *context)
 {
-    	return web2_exit(camera->port, context);
+	return web2_exit(camera->port, context);
 }
 
 static int
@@ -678,8 +678,8 @@ static CameraFilesystemFuncs fsfuncs = {
 int
 camera_init (Camera *camera, GPContext *context)
 {
-        camera->functions->exit                 = camera_exit;
-        camera->functions->about                = camera_about;
+	camera->functions->exit                 = camera_exit;
+	camera->functions->about                = camera_about;
 	gp_filesystem_set_funcs (camera->fs, &fsfuncs, camera);
 	return web2_init(camera->port, context);
 }

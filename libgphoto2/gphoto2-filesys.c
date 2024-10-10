@@ -430,7 +430,7 @@ lookup_folder_file (
 		CameraList	*list;
 		int		ret;
 		/*
-                 * The folder is dirty. List the files in it to make it clean.
+		 * The folder is dirty. List the files in it to make it clean.
 		 */
 		GP_LOG_D ("Folder %s is dirty. "
 			"Listing files in there to make folder clean...", folder);
@@ -1465,10 +1465,7 @@ recursive_folder_scan (
 		char *xfolder;
 		ret = recursive_folder_scan (f, lookforfile, &xfolder);
 		if (ret == GP_OK) {
-			C_MEM ((*foldername) = malloc (strlen (folder->name) + 1 + strlen (xfolder) + 1));
-			strcpy ((*foldername),folder->name);
-			strcat ((*foldername),"/");
-			strcat ((*foldername),xfolder);
+			*foldername = aprintf("%s/%s", folder->name, xfolder);
 			free (xfolder);
 			return GP_OK;
 		}

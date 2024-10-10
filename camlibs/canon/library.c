@@ -78,8 +78,8 @@ extern long int timezone;
 
 static const struct canonCaptureSizeClassStruct captureSizeArray[] = {
 	{CAPTURE_COMPATIBILITY, N_("Compatibility Mode")},
-        {CAPTURE_THUMB, N_("Thumbnail")},
-        {CAPTURE_FULL_IMAGE, N_("Full Image")},
+	{CAPTURE_THUMB, N_("Thumbnail")},
+	{CAPTURE_FULL_IMAGE, N_("Full Image")},
 	{0, NULL}
 };
 
@@ -103,62 +103,62 @@ static const struct canonIsoStateStruct isoStateArray[] = {
 };
 
 static const struct canonShutterSpeedStateStruct shutterSpeedStateArray[] = {
-        {SHUTTER_SPEED_BULB, N_("Bulb")},
-        {SHUTTER_SPEED_30_SEC,"30"},
-        {SHUTTER_SPEED_25_SEC,"25"},
-        {SHUTTER_SPEED_20_SEC,"20"},
-        {SHUTTER_SPEED_15_SEC,"15"},
-        {SHUTTER_SPEED_13_SEC,"13"},
-        {SHUTTER_SPEED_10_SEC,"10"},
-        {SHUTTER_SPEED_8_SEC,"8"},
-        {SHUTTER_SPEED_6_SEC,"6"},
-        {SHUTTER_SPEED_5_SEC,"5"},
-        {SHUTTER_SPEED_4_SEC,"4"},
-        {SHUTTER_SPEED_3_2_SEC,"3.2"},
-        {SHUTTER_SPEED_2_5_SEC,"2.5"},
-        {SHUTTER_SPEED_2_SEC,"2"},
-        {SHUTTER_SPEED_1_6_SEC,"1.6"},
-        {SHUTTER_SPEED_1_3_SEC,"1.3"},
-        {SHUTTER_SPEED_1_SEC,"1"},
+	{SHUTTER_SPEED_BULB, N_("Bulb")},
+	{SHUTTER_SPEED_30_SEC,"30"},
+	{SHUTTER_SPEED_25_SEC,"25"},
+	{SHUTTER_SPEED_20_SEC,"20"},
+	{SHUTTER_SPEED_15_SEC,"15"},
+	{SHUTTER_SPEED_13_SEC,"13"},
+	{SHUTTER_SPEED_10_SEC,"10"},
+	{SHUTTER_SPEED_8_SEC,"8"},
+	{SHUTTER_SPEED_6_SEC,"6"},
+	{SHUTTER_SPEED_5_SEC,"5"},
+	{SHUTTER_SPEED_4_SEC,"4"},
+	{SHUTTER_SPEED_3_2_SEC,"3.2"},
+	{SHUTTER_SPEED_2_5_SEC,"2.5"},
+	{SHUTTER_SPEED_2_SEC,"2"},
+	{SHUTTER_SPEED_1_6_SEC,"1.6"},
+	{SHUTTER_SPEED_1_3_SEC,"1.3"},
+	{SHUTTER_SPEED_1_SEC,"1"},
 	{SHUTTER_SPEED_0_8_SEC,"0.8"},
 	{SHUTTER_SPEED_0_6_SEC,"0.6"},
 	{SHUTTER_SPEED_0_5_SEC,"0.5"},
 	{SHUTTER_SPEED_0_4_SEC,"0.4"},
 	{SHUTTER_SPEED_0_3_SEC,"0.3"},
-        {SHUTTER_SPEED_1_4,"1/4"},
-        {SHUTTER_SPEED_1_5,"1/5"},
-        {SHUTTER_SPEED_1_6,"1/6"},
-        {SHUTTER_SPEED_1_8,"1/8"},
-        {SHUTTER_SPEED_1_10,"1/10"},
-        {SHUTTER_SPEED_1_13,"1/13"},
-        {SHUTTER_SPEED_1_15,"1/15"},
-        {SHUTTER_SPEED_1_20,"1/20"},
-        {SHUTTER_SPEED_1_25,"1/25"},
-        {SHUTTER_SPEED_1_30,"1/30"},
-        {SHUTTER_SPEED_1_40,"1/40"},
-        {SHUTTER_SPEED_1_50,"1/50"},
-        {SHUTTER_SPEED_1_60,"1/60"},
-        {SHUTTER_SPEED_1_80,"1/80"},
-        {SHUTTER_SPEED_1_100,"1/100"},
-        {SHUTTER_SPEED_1_125,"1/125"},
-        {SHUTTER_SPEED_1_160,"1/160"},
-        {SHUTTER_SPEED_1_200,"1/200"},
-        {SHUTTER_SPEED_1_250,"1/250"},
-        {SHUTTER_SPEED_1_320,"1/320"},
-        {SHUTTER_SPEED_1_400,"1/400"},
-        {SHUTTER_SPEED_1_500,"1/500"},
-        {SHUTTER_SPEED_1_640,"1/640"},
-        {SHUTTER_SPEED_1_800,"1/800"},
-        {SHUTTER_SPEED_1_1000,"1/1000"},
-        {SHUTTER_SPEED_1_1250,"1/1250"},
-        {SHUTTER_SPEED_1_1600,"1/1600"},
-        {SHUTTER_SPEED_1_2000,"1/2000"},
-        {SHUTTER_SPEED_1_2500,"1/2500"},
-        {SHUTTER_SPEED_1_3200,"1/3200"},
-        {SHUTTER_SPEED_1_4000,"1/4000"},
-        {SHUTTER_SPEED_1_5000,"1/5000"},
-        {SHUTTER_SPEED_1_6400,"1/6400"},
-        {SHUTTER_SPEED_1_8000,"1/8000"},
+	{SHUTTER_SPEED_1_4,"1/4"},
+	{SHUTTER_SPEED_1_5,"1/5"},
+	{SHUTTER_SPEED_1_6,"1/6"},
+	{SHUTTER_SPEED_1_8,"1/8"},
+	{SHUTTER_SPEED_1_10,"1/10"},
+	{SHUTTER_SPEED_1_13,"1/13"},
+	{SHUTTER_SPEED_1_15,"1/15"},
+	{SHUTTER_SPEED_1_20,"1/20"},
+	{SHUTTER_SPEED_1_25,"1/25"},
+	{SHUTTER_SPEED_1_30,"1/30"},
+	{SHUTTER_SPEED_1_40,"1/40"},
+	{SHUTTER_SPEED_1_50,"1/50"},
+	{SHUTTER_SPEED_1_60,"1/60"},
+	{SHUTTER_SPEED_1_80,"1/80"},
+	{SHUTTER_SPEED_1_100,"1/100"},
+	{SHUTTER_SPEED_1_125,"1/125"},
+	{SHUTTER_SPEED_1_160,"1/160"},
+	{SHUTTER_SPEED_1_200,"1/200"},
+	{SHUTTER_SPEED_1_250,"1/250"},
+	{SHUTTER_SPEED_1_320,"1/320"},
+	{SHUTTER_SPEED_1_400,"1/400"},
+	{SHUTTER_SPEED_1_500,"1/500"},
+	{SHUTTER_SPEED_1_640,"1/640"},
+	{SHUTTER_SPEED_1_800,"1/800"},
+	{SHUTTER_SPEED_1_1000,"1/1000"},
+	{SHUTTER_SPEED_1_1250,"1/1250"},
+	{SHUTTER_SPEED_1_1600,"1/1600"},
+	{SHUTTER_SPEED_1_2000,"1/2000"},
+	{SHUTTER_SPEED_1_2500,"1/2500"},
+	{SHUTTER_SPEED_1_3200,"1/3200"},
+	{SHUTTER_SPEED_1_4000,"1/4000"},
+	{SHUTTER_SPEED_1_5000,"1/5000"},
+	{SHUTTER_SPEED_1_6400,"1/6400"},
+	{SHUTTER_SPEED_1_8000,"1/8000"},
 	{0, NULL},
 };
 
@@ -196,10 +196,10 @@ static const struct canonApertureStateStruct apertureStateArray[] = {
 };
 
 static const struct canonFocusModeStateStruct focusModeStateArray[] = {
-        {AUTO_FOCUS_ONE_SHOT, N_("Auto focus: one-shot")},
-        {AUTO_FOCUS_AI_SERVO, N_("Auto focus: AI servo")},
-        {AUTO_FOCUS_AI_FOCUS, N_("Auto focus: AI focus")},
-        {MANUAL_FOCUS, N_("Manual focus")},
+	{AUTO_FOCUS_ONE_SHOT, N_("Auto focus: one-shot")},
+	{AUTO_FOCUS_AI_SERVO, N_("Auto focus: AI servo")},
+	{AUTO_FOCUS_AI_FOCUS, N_("Auto focus: AI focus")},
+	{MANUAL_FOCUS, N_("Manual focus")},
 	{0, NULL},
 };
 
@@ -902,8 +902,7 @@ get_file_func (CameraFilesystem *fs, const char *folder, const char *filename,
 			}
 			if (ret != GP_OK) {
 				GP_DEBUG ("get_file_func: GP_FILE_TYPE_PREVIEW: couldn't extract JPEG thumbnail data");
-				if (data)
-					free (data);
+				free (data);
 				data = NULL;
 				return ret;
 			}
@@ -1201,46 +1200,45 @@ get_last_file (Camera *camera, char *directory, char *destname,
 	int t;
 	GP_DEBUG ("get_last_file()");
 
-	if(directory[1] == ':') {
-	    /* gp_file_list_folder() needs absolute filenames
-	       starting with '/' */
-	    GP_DEBUG ("get_last_file(): replacing '%c:%c' by '/'",
-		      directory[0], directory[2]);
-	    sprintf(dir2, "/%s", &directory[3]);
-	    directory = dir2;
+	if (directory[1] == ':') {
+		/* gp_file_list_folder() needs absolute filenames
+		   starting with '/' */
+		GP_DEBUG ("get_last_file(): replacing '%c:%c' by '/'",
+			directory[0], directory[2]);
+		sprintf(dir2, "/%s", &directory[3]);
+		directory = dir2;
 	}
 
 	gp_list_new(&list);
-	if(getdirectory) {
-	    CHECK_RESULT (gp_filesystem_list_folders (fs, directory, list, context));
-	    GP_DEBUG ("get_last_file(): %d folders", list->count);
+	if (getdirectory) {
+		CHECK_RESULT (gp_filesystem_list_folders (fs, directory, list, context));
+		GP_DEBUG ("get_last_file(): %d folders", list->count);
+	} else {
+		CHECK_RESULT (gp_filesystem_list_files (fs, directory, list, context));
+		GP_DEBUG ("get_last_file(): %d files", list->count);
 	}
-	else {
-	    CHECK_RESULT (gp_filesystem_list_files (fs, directory, list, context));
-	    GP_DEBUG ("get_last_file(): %d files", list->count);
-	}
-	for(t=0;t<list->count;t++)
+	for (t=0;t<list->count;t++)
 	{
-	    char* name = list->entry[t].name;
-	    if(getdirectory)
-		GP_DEBUG ("get_last_file(): folder: %s", name);
-	    else
-		GP_DEBUG ("get_last_file(): file: %s", name);
+		char* name = list->entry[t].name;
+		if (getdirectory)
+			GP_DEBUG ("get_last_file(): folder: %s", name);
+		else
+			GP_DEBUG ("get_last_file(): file: %s", name);
 
-	    /* we search only for directories of the form [0-9]{3}CANON... */
-	    if(getdirectory && ((strlen (name)!=8) ||
-		    (!isdigit(name[0]) ||
-		     !isdigit(name[1]) ||
-		     !isdigit(name[2])) || strcmp(&name[3],"CANON")))
-		continue;
+		/* we search only for directories of the form [0-9]{3}CANON... */
+		if (getdirectory && ((strlen (name)!=8) ||
+			(!isdigit(name[0]) ||
+			 !isdigit(name[1]) ||
+			 !isdigit(name[2])) || strcmp(&name[3], "CANON")))
+			continue;
 
-	    /* ...and only for files similar to AUT_[0-9]{4} */
-	    if(!getdirectory && (!isdigit(name[6]) ||
-			         !isdigit(name[7])))
-		continue;
+		/* ...and only for files similar to AUT_[0-9]{4} */
+		if (!getdirectory && (!isdigit(name[6]) ||
+			!isdigit(name[7])))
+			continue;
 
-	    if(!result[0] || strcmp((list->entry[t].name)+4, result+4) > 0)
-		strcpy(result, list->entry[t].name);
+		if (!result[0] || strcmp((list->entry[t].name)+4, result+4) > 0)
+			strcpy(result, list->entry[t].name);
 	}
 	gp_list_free(list);
 
@@ -1250,15 +1248,15 @@ get_last_file (Camera *camera, char *directory, char *destname,
 static int
 get_last_picture (Camera *camera, char *directory, char *destname, GPContext* context)
 {
-    GP_DEBUG ("get_last_picture()");
-    return get_last_file(camera, directory, destname, context, 0, destname);
+	GP_DEBUG ("get_last_picture()");
+	return get_last_file(camera, directory, destname, context, 0, destname);
 }
 
 static int
 get_last_dir (Camera *camera, char *directory, char *destname, GPContext* context)
 {
-    GP_DEBUG ("get_last_dir()");
-    return get_last_file(camera, directory, destname, context, 1, destname);
+	GP_DEBUG ("get_last_dir()");
+	return get_last_file(camera, directory, destname, context, 1, destname);
 }
 
 /*
@@ -1269,21 +1267,20 @@ get_last_dir (Camera *camera, char *directory, char *destname, GPContext* contex
 static void
 convert_filename_to_8_3(const char* filename, char* dest)
 {
-    char*c;
-    GP_DEBUG ("convert_filename_to_8_3()");
-    c = strchr(filename, '.');
-    if(!c) {
-	sprintf(dest, "%.8s", filename);
-    }
-    else {
-	int l = c-filename;
-	if(l>8)
-	    l=8;
-	memcpy(dest, filename, l);
-	dest[l]=0;
-	strcat(dest, c);
-	dest[l+4]=0;
-    }
+	char*c;
+	GP_DEBUG ("convert_filename_to_8_3()");
+	c = strchr(filename, '.');
+	if (!c) {
+		sprintf(dest, "%.8s", filename);
+	} else {
+		int l = c-filename;
+		if (l>8)
+			l=8;
+		memcpy(dest, filename, l);
+		dest[l]=0;
+		strcat(dest, c);
+		dest[l+4]=0;
+	}
 }
 
 
@@ -1693,7 +1690,7 @@ camera_get_config (Camera *camera, CameraWidget **window, GPContext *context)
 
 
 	/* DSLRs have only "Manual" Zoom */
-        if ( camera->pl->md->id_str && !strstr(camera->pl->md->id_str,"EOS") && !strstr(camera->pl->md->id_str,"Rebel")) {
+	if (camera->pl->md->id_str && !strstr(camera->pl->md->id_str, "EOS") && !strstr(camera->pl->md->id_str, "Rebel")) {
 		/* Zoom level */
 		gp_widget_new (GP_WIDGET_RANGE, _("Zoom"), &t);
 		gp_widget_set_name (t, "zoom");
@@ -1903,7 +1900,7 @@ camera_get_config (Camera *camera, CameraWidget **window, GPContext *context)
 	res = canon_int_get_time (camera, &camtime, context);
 	if (res == GP_OK) {
 		strftime (formatted_camera_time, sizeof (formatted_camera_time),
-                          "%Y-%m-%d %H:%M:%S", gmtime (&camtime));
+			  "%Y-%m-%d %H:%M:%S", gmtime (&camtime));
 		gp_widget_set_value (t, formatted_camera_time);
 	} else {
 		gp_widget_set_value (t, _("Error"));
@@ -1975,7 +1972,7 @@ camera_set_config (Camera *camera, CameraWidget *window, GPContext *context)
 
 	gp_widget_get_child_by_label (window, _("Owner Name"), &w);
 	if (gp_widget_changed (w)) {
-	        gp_widget_set_changed (w, 0);
+		gp_widget_set_changed (w, 0);
 		gp_widget_get_value (w, &wvalue);
 		if (!check_readiness (camera, context)) {
 			gp_context_status (context, _("Camera unavailable"));
@@ -1989,7 +1986,7 @@ camera_set_config (Camera *camera, CameraWidget *window, GPContext *context)
 
 	gp_widget_get_child_by_label (window, _("Capture Size Class"), &w);
 	if (gp_widget_changed (w)) {
-	        gp_widget_set_changed (w, 0);
+		gp_widget_set_changed (w, 0);
 		gp_widget_get_value (w, &wvalue);
 
 		i = 0;
@@ -2007,7 +2004,7 @@ camera_set_config (Camera *camera, CameraWidget *window, GPContext *context)
 
 	}
 
-        /* Enable remote control, if not already enabled */
+	/* Enable remote control, if not already enabled */
 	if (!camera->pl->remote_control) {
 		res = canon_int_start_remote_control (camera, context);
 		if (res != GP_OK)
@@ -2016,7 +2013,7 @@ camera_set_config (Camera *camera, CameraWidget *window, GPContext *context)
 
 	gp_widget_get_child_by_label (window, _("ISO Speed"), &w);
 	if (gp_widget_changed (w)) {
-	        gp_widget_set_changed (w, 0);
+		gp_widget_set_changed (w, 0);
 		gp_widget_get_value (w, &wvalue);
 		if (!check_readiness (camera, context)) {
 			gp_context_status (context, _("Camera unavailable"));
@@ -2046,7 +2043,7 @@ camera_set_config (Camera *camera, CameraWidget *window, GPContext *context)
 
 	gp_widget_get_child_by_label (window, _("Shooting mode"), &w);
 	if (gp_widget_changed (w)) {
-	        gp_widget_set_changed (w, 0);
+		gp_widget_set_changed (w, 0);
 		gp_widget_get_value (w, &wvalue);
 		if (!check_readiness (camera, context)) {
 			gp_context_status (context, _("Camera unavailable"));
@@ -2076,7 +2073,7 @@ camera_set_config (Camera *camera, CameraWidget *window, GPContext *context)
 
 	gp_widget_get_child_by_label (window, _("Shutter Speed"), &w);
 	if (gp_widget_changed (w)) {
-	        gp_widget_set_changed (w, 0);
+		gp_widget_set_changed (w, 0);
 		gp_widget_get_value (w, &wvalue);
 		if (!check_readiness (camera, context)) {
 			gp_context_status (context, _("Camera unavailable"));
@@ -2105,7 +2102,7 @@ camera_set_config (Camera *camera, CameraWidget *window, GPContext *context)
 
 	gp_widget_get_child_by_label (window, _("Aperture"), &w);
 	if (gp_widget_changed (w)) {
-	        gp_widget_set_changed (w, 0);
+		gp_widget_set_changed (w, 0);
 		gp_widget_get_value (w, &wvalue);
 		if (!check_readiness (camera, context)) {
 			gp_context_status (context, _("Camera unavailable"));
@@ -2135,7 +2132,7 @@ camera_set_config (Camera *camera, CameraWidget *window, GPContext *context)
 	if (gp_widget_changed (w)) {
 		unsigned char expbias;
 
-	        gp_widget_set_changed (w, 0);
+		gp_widget_set_changed (w, 0);
 		gp_widget_get_value (w, &wvalue);
 		if (!check_readiness (camera, context)) {
 			gp_context_status (context, _("Camera unavailable"));
@@ -2164,7 +2161,7 @@ camera_set_config (Camera *camera, CameraWidget *window, GPContext *context)
 
 	gp_widget_get_child_by_label (window, _("Image Format"), &w);
 	if (gp_widget_changed (w)) {
-	        gp_widget_set_changed (w, 0);
+		gp_widget_set_changed (w, 0);
 		gp_widget_get_value (w, &wvalue);
 		if (!check_readiness (camera, context)) {
 			gp_context_status (context, _("Camera unavailable"));
@@ -2193,7 +2190,7 @@ camera_set_config (Camera *camera, CameraWidget *window, GPContext *context)
 
 	gp_widget_get_child_by_label (window, _("Focus Mode"), &w);
 	if (gp_widget_changed (w)) {
-	        gp_widget_set_changed (w, 0);
+		gp_widget_set_changed (w, 0);
 		gp_widget_get_value (w, &wvalue);
 		if (!check_readiness (camera, context)) {
 			gp_context_status (context, _("Camera unavailable"));
@@ -2223,7 +2220,7 @@ camera_set_config (Camera *camera, CameraWidget *window, GPContext *context)
 	/* Beep */
 	gp_widget_get_child_by_label (window, _("Beep"), &w);
 	if (gp_widget_changed (w)) {
-	        gp_widget_set_changed (w, 0);
+		gp_widget_set_changed (w, 0);
 		gp_widget_get_value (w, &wvalue);
 		if (!check_readiness (camera, context)) {
 			gp_context_status (context, _("Camera unavailable"));
@@ -2252,13 +2249,13 @@ camera_set_config (Camera *camera, CameraWidget *window, GPContext *context)
 
 
 	/* DSLRs have only "Manual" Zoom */
-        if ( camera->pl->md->id_str && !strstr(camera->pl->md->id_str,"EOS") && !strstr(camera->pl->md->id_str,"Rebel")) {
+	if (camera->pl->md->id_str && !strstr(camera->pl->md->id_str, "EOS") && !strstr(camera->pl->md->id_str, "Rebel")) {
 		/* Zoom */
 		gp_widget_get_child_by_label (window, _("Zoom"), &w);
 		if (gp_widget_changed (w)) {
 			float zoom;
 
-	        	gp_widget_set_changed (w, 0);
+			gp_widget_set_changed (w, 0);
 			gp_widget_get_value (w, &zoom);
 			if (!check_readiness (camera, context)) {
 				gp_context_status (context, _("Camera unavailable"));
@@ -2274,7 +2271,7 @@ camera_set_config (Camera *camera, CameraWidget *window, GPContext *context)
 	/* Aperture */
 	gp_widget_get_child_by_label (window, _("Aperture"), &w);
 	if (gp_widget_changed (w)) {
-	        gp_widget_set_changed (w, 0);
+		gp_widget_set_changed (w, 0);
 		gp_widget_get_value (w, &wvalue);
 		if (!check_readiness (camera, context)) {
 			gp_context_status (context, _("Camera unavailable"));
@@ -2304,7 +2301,7 @@ camera_set_config (Camera *camera, CameraWidget *window, GPContext *context)
 	/* Flash mode */
 	gp_widget_get_child_by_label (window, _("Flash Mode"), &w);
 	if (gp_widget_changed (w)) {
-	        gp_widget_set_changed (w, 0);
+		gp_widget_set_changed (w, 0);
 		gp_widget_get_value (w, &wvalue);
 		if (!check_readiness (camera, context)) {
 			gp_context_status (context, _("Camera unavailable"));
@@ -2334,7 +2331,7 @@ camera_set_config (Camera *camera, CameraWidget *window, GPContext *context)
 
 	gp_widget_get_child_by_label (window, _("Synchronize camera date and time with PC"), &w);
 	if (gp_widget_changed (w)) {
-	        gp_widget_set_changed (w, 0);
+		gp_widget_set_changed (w, 0);
 		gp_widget_get_value (w, &wvalue);
 		if (!check_readiness (camera, context)) {
 			gp_context_status (context, _("Camera unavailable"));
@@ -2350,7 +2347,7 @@ camera_set_config (Camera *camera, CameraWidget *window, GPContext *context)
 	gp_widget_get_child_by_label (window, _("List all files"), &w);
 	if (gp_widget_changed (w)) {
 		/* XXXXX mark CameraFS as dirty */
-	        gp_widget_set_changed (w, 0);
+		gp_widget_set_changed (w, 0);
 		gp_widget_get_value (w, &val);
 		camera->pl->list_all_files = val;
 		sprintf (str, "%d", val);
@@ -2363,7 +2360,7 @@ camera_set_config (Camera *camera, CameraWidget *window, GPContext *context)
 #ifdef CANON_EXPERIMENTAL_UPLOAD
 	gp_widget_get_child_by_label (window, _("Keep filename on upload"), &w);
 	if (gp_widget_changed (w)) {
-	        gp_widget_set_changed (w, 0);
+		gp_widget_set_changed (w, 0);
 		gp_widget_get_value (w, &camera->pl->upload_keep_filename);
 		GP_DEBUG ("New config value for \"Keep filename on upload\": %i",
 			  camera->pl->upload_keep_filename);
@@ -2421,19 +2418,15 @@ make_dir_func (CameraFilesystem __unused__ *fs, const char *folder,
 	if (strlen (folder) > 1) {
 		/* folder is something more than / */
 
-		if (strlen (folder) + 1 + strlen (name) > sizeof (gppath) - 1) {
-			GP_DEBUG ("make_dir_func: Arguments too long");
+		if (snprintf (gppath, sizeof(gppath), "%s/%s", folder, name) >= (int)sizeof(gppath)) {
+			GP_LOG_E ("Arguments too long");
 			return GP_ERROR_BAD_PARAMETERS;
 		}
-
-		sprintf (gppath, "%s/%s", folder, name);
 	} else {
-		if (1 + strlen (name) > sizeof (gppath) - 1) {
-			GP_DEBUG ("make_dir_func: Arguments too long");
+		if (snprintf (gppath, sizeof(gppath), "/%s", name) >= (int)sizeof(gppath)) {
+			GP_LOG_E ("Arguments too long");
 			return GP_ERROR_BAD_PARAMETERS;
 		}
-
-		sprintf (gppath, "/%s", name);
 	}
 
 	canonpath = gphoto2canonpath (camera, gppath, context);
@@ -2463,19 +2456,15 @@ remove_dir_func (CameraFilesystem __unused__ *fs, const char *folder,
 	if (strlen (folder) > 1) {
 		/* folder is something more than / */
 
-		if (strlen (folder) + 1 + strlen (name) > sizeof (gppath) - 1) {
-			GP_DEBUG ("make_dir_func: Arguments too long");
+		if (snprintf (gppath, sizeof(gppath), "%s/%s", folder, name) >= (int)sizeof(gppath)) {
+			GP_LOG_E ("Arguments too long");
 			return GP_ERROR_BAD_PARAMETERS;
 		}
-
-		sprintf (gppath, "%s/%s", folder, name);
 	} else {
-		if (1 + strlen (name) > sizeof (gppath) - 1) {
-			GP_DEBUG ("make_dir_func: Arguments too long");
+		if (snprintf (gppath, sizeof(gppath), "/%s", name) >= (int)sizeof(gppath)) {
+			GP_LOG_E ("Arguments too long");
 			return GP_ERROR_BAD_PARAMETERS;
 		}
-
-		sprintf (gppath, "/%s", name);
 	}
 
 	canonpath = gphoto2canonpath (camera, gppath, context);

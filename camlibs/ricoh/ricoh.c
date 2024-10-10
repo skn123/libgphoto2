@@ -147,7 +147,7 @@ static int
 ricoh_recv (Camera *camera, GPContext *context, unsigned char *cmd,
             unsigned char *number, unsigned char *data, unsigned char *len)
 {
-        unsigned char buf[6];
+	unsigned char buf[6];
 	unsigned char r, i, ii, last_dle;
 	unsigned int crc = 0;
 
@@ -269,13 +269,13 @@ ricoh_transmit (Camera *camera, GPContext *context, unsigned char cmd,
                 const unsigned char *data, unsigned char len,
                 unsigned char *ret_data, unsigned char *ret_len)
 {
-        unsigned char ret_cmd;
+	unsigned char ret_cmd;
 	unsigned int r = 0;
 	int result;
 
-        while (1) {
-                CR (ricoh_send (camera, context, cmd, 0, data, len));
-                result = ricoh_recv (camera, context, &ret_cmd, NULL,
+	while (1) {
+		CR (ricoh_send (camera, context, cmd, 0, data, len));
+		result = ricoh_recv (camera, context, &ret_cmd, NULL,
 				     ret_data, ret_len);
 		switch (result) {
 		case GP_ERROR_TIMEOUT:
@@ -352,14 +352,14 @@ ricoh_transmit (Camera *camera, GPContext *context, unsigned char cmd,
 		gp_context_error (context, _("An unknown error occurred. "
 			"Please contact %s."), MAIL_GPHOTO_DEVEL);
 		return (GP_ERROR);
-        }
+	}
 
 	/* Success! We don't need the first two bytes any more. */
 	*ret_len -= 2;
 	if (*ret_len > 0)
 		memmove (ret_data, ret_data + 2, *ret_len);
 
-        return (GP_OK);
+	return (GP_OK);
 }
 
 int
@@ -574,18 +574,17 @@ ricoh_get_pic (Camera *camera, GPContext *context, unsigned int n,
 	RicohMode mode;
 
 	GP_DEBUG ("Getting image %i as %s...", n,
-							(type==RICOH_FILE_TYPE_PREVIEW ? "thumbnail":"image"));
+		  (type==RICOH_FILE_TYPE_PREVIEW ? "thumbnail":"image"));
 
 	/* Put camera into play mode, if not already */
 	CR (ricoh_get_mode (camera, context, &mode));
 	if (mode != RICOH_MODE_PLAY)
-	    CR (ricoh_set_mode (camera, context, RICOH_MODE_PLAY));
+		CR (ricoh_set_mode (camera, context, RICOH_MODE_PLAY));
 
 	/* Send picture number */
 	p[0] = n >> 0;
 	p[1] = n >> 8;
-	CR (ricoh_transmit (camera, context, (unsigned char) type,
-			    p, 2, buf, &len));
+	CR (ricoh_transmit (camera, context, (unsigned char) type, p, 2, buf, &len));
 	C_LEN (context, len, 16);
 
 	/*
@@ -839,8 +838,7 @@ ricoh_put_file (Camera *camera, GPContext *context, const char *name,
 	for (i = 0; i < size; i += 128) {
 		memset (block, 0, sizeof (buf));
 		memcpy (block, data + i, MIN (128, size - i));
-		CR (ricoh_transmit (camera, context, 0xa2, block, 128,
-				    buf, &len));
+		CR (ricoh_transmit (camera, context, 0xa2, block, 128, buf, &len));
 		C_LEN (context, len, 0);
 		if (gp_context_cancel (context) == GP_CONTEXT_FEEDBACK_CANCEL)
 			return (GP_ERROR_CANCEL);

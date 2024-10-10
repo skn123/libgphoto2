@@ -451,7 +451,7 @@ canon_usb_init (Camera *camera, GPContext *context)
 
 #if 0
 	/* FIXME: as raspberry user confirmed the need for those...
- 	 * I am currently not sure why I added them.
+	 * I am currently not sure why I added them.
 	 */
 	gp_port_usb_clear_halt (camera->port, GP_PORT_USB_ENDPOINT_IN);
 	gp_port_usb_clear_halt (camera->port, GP_PORT_USB_ENDPOINT_OUT);
@@ -887,7 +887,7 @@ static int canon_usb_poll_interrupt_pipe ( Camera *camera, unsigned char *buf, u
                 /* Either some real data, or failure */
                 if ( status != 0 && status != GP_ERROR_TIMEOUT)
                         break;
-        	gettimeofday ( &cur, NULL );
+		gettimeofday (&cur, NULL);
 		curduration =	(cur.tv_sec-start.tv_sec)*1000 +
 				(cur.tv_usec-start.tv_usec)/1000;
 		if (curduration >= timeout) {
@@ -955,8 +955,7 @@ canon_usb_wait_for_event (Camera *camera, int timeout,
 		if (path->folder[0] != '/') {
 			free (path);
 			*eventtype = GP_EVENT_UNKNOWN;
-			*eventdata = malloc(strlen("Failed to get added filename?")+1);
-			strcpy (*eventdata, "Failed to get added filename?");
+			*eventdata = aprintf("Failed to get added filename?");
 		}
 		free ( camera->pl->directory_state );
 		camera->pl->directory_state = final_state;
@@ -965,8 +964,7 @@ canon_usb_wait_for_event (Camera *camera, int timeout,
 	}
 	default:
 		*eventtype = GP_EVENT_UNKNOWN;
-		*eventdata = malloc(strlen("Unknown CANON event 0x01 0x02 0x03 0x04 0x05")+1);
-		sprintf (*eventdata,"Unknown CANON event 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x",buf2[0],buf2[1],buf2[2],buf2[3],buf2[4]);
+		*eventdata = aprintf("Unknown CANON event 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x",buf2[0],buf2[1],buf2[2],buf2[3],buf2[4]);
 		return GP_OK;
 	}
 	return GP_OK;
@@ -2282,8 +2280,7 @@ canon_usb_put_file (Camera *camera, CameraFile *file,
 		if (status != 0x40) {
 			GP_DEBUG ("canon_put_file_usb: write 1 failed! (returned %i)", status);
 			gp_context_error(context, _("File upload failed."));
-			if(newdata)
-				free(newdata);
+			free(newdata);
 			free(packet);
 			return GP_ERROR_CORRUPTED_DATA;
 		}
@@ -2293,8 +2290,7 @@ canon_usb_put_file (Camera *camera, CameraFile *file,
 			GP_DEBUG ("canon_put_file_usb: read 1 failed! "
 				  "(returned %i, expected %i)", status, 0x40);
 			gp_context_error(context, _("File upload failed."));
-			if(newdata)
-				free(newdata);
+			free(newdata);
 			free(packet);
 			return GP_ERROR_CORRUPTED_DATA;
 		}
@@ -2329,8 +2325,7 @@ canon_usb_put_file (Camera *camera, CameraFile *file,
 			GP_DEBUG ("canon_put_file_usb: write 2 failed! "
 				  "(returned %i, expected %li)", status, len1+0x40);
 			gp_context_error(context, _("File upload failed."));
-			if(newdata)
-				free(newdata);
+			free(newdata);
 			free(packet);
 			if ( status < 0 )
 				return GP_ERROR_OS_FAILURE;
@@ -2343,8 +2338,7 @@ canon_usb_put_file (Camera *camera, CameraFile *file,
 			GP_DEBUG ("canon_put_file_usb: read 2 failed! "
 				  "(returned %i, expected %i)", status, 0x5c);
 			gp_context_error(context, _("File upload failed."));
-			if(newdata)
-				free(newdata);
+			free(newdata);
 			free(packet);
 			if ( status < 0 )
 				return GP_ERROR_OS_FAILURE;
@@ -2357,8 +2351,7 @@ canon_usb_put_file (Camera *camera, CameraFile *file,
 			GP_DEBUG ("canon_put_file_usb: read 3 failed! "
 				  "(returned %i, expected %i)", status, 0x5c);
 			gp_context_error(context, _("File upload failed."));
-			if(newdata)
-				free(newdata);
+			free(newdata);
 			free(packet);
 			if ( status < 0 )
 				return GP_ERROR_OS_FAILURE;
@@ -2385,8 +2378,7 @@ canon_usb_put_file (Camera *camera, CameraFile *file,
 		gp_context_message(context, _("File was too big. You may have to turn your camera off and back on before uploading more files."));
         }
 
-        if(newdata)
-		free(newdata);
+        free(newdata);
         free(packet);
         return GP_OK;
 }

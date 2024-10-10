@@ -151,9 +151,9 @@ get_file_func (CameraFilesystem *fs, const char *folder, const char *filename,
 	       GPContext *context)
 {
 	Camera *camera = data;
-	int idx, size;
+	int idx;
 #ifdef HAVE_LIBGD
-	int ret;
+	int ret, size;
 	gdImagePtr im;
 	void *gdpng;
 #endif
@@ -168,8 +168,7 @@ get_file_func (CameraFilesystem *fs, const char *folder, const char *filename,
 		CHECK (tp6801_read_raw_file (camera, idx, &raw))
 		gp_file_set_mime_type (file, GP_MIME_RAW);
 		gp_file_set_name (file, filename);
-		gp_file_set_data_and_size (file, raw,
-		                           tp6801_filesize (camera));
+		gp_file_set_data_and_size (file, raw, tp6801_filesize (camera));
 
 		return GP_OK;
 	}
@@ -398,8 +397,8 @@ storage_info_func (CameraFilesystem *fs,
 
 	imagesize = tp6801_filesize (camera);
 	if (imagesize) {
-        	sinfo->fields |= GP_STORAGEINFO_FREESPACEIMAGES;
-        	sinfo->freeimages = free / imagesize;
+		sinfo->fields |= GP_STORAGEINFO_FREESPACEIMAGES;
+		sinfo->freeimages = free / imagesize;
 	}
 
 	return GP_OK;
@@ -469,9 +468,9 @@ camera_exit (Camera *camera, GPContext *context)
 int
 camera_init (Camera *camera, GPContext *context)
 {
-    	CameraAbilities a;
-    	int ret;
-    	char *dump, buf[256];
+	CameraAbilities a;
+	int ret;
+	char *dump, buf[256];
 
 	/* First, set up all the function pointers */
 	camera->functions->exit    = camera_exit;

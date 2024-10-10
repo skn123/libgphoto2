@@ -59,7 +59,7 @@ free_files (CameraPrivateLibrary *pl)
 	int i;
 	if (pl->flash_files) {
 		for (i = 0; i < pl->num_files_on_flash; i++) {
-			if(pl->flash_files[i].thumb) free (pl->flash_files[i].thumb);
+			free (pl->flash_files[i].thumb);
 		}
 		free(pl->flash_files);
 		pl->flash_files = NULL;
@@ -345,7 +345,7 @@ spca50x_flash_get_file_name (CameraPrivateLibrary *pl, int index, char *name)
 
 		memset (p, 0, sizeof(p));
 		/* dsc350 - get the file info, so we can set the file type
-	           correctly */
+		   correctly */
 		spca500_flash_84D_get_file_info (pl, index, &w, &h, &type, &size);
 		if (type < 3){ /*  for single images */
 			snprintf (p, sizeof(p), "Img%03d.jpg", (index + 1));

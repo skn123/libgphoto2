@@ -57,7 +57,7 @@ struct {
 	unsigned short idProduct;
 } models[] = {
 	{"American Idol Keychain Camera", GP_DRIVER_STATUS_TESTING,
-							    0x0979, 0x0224},
+							0x0979, 0x0224},
 	{"NogaNet TDC-15", GP_DRIVER_STATUS_TESTING, 0x0979, 0x0224},
 	{"Cobra DC125", GP_DRIVER_STATUS_EXPERIMENTAL, 0x0979, 0x0224},
 	{NULL,0,0,0}
@@ -112,7 +112,7 @@ static int camera_manual (Camera *camera, CameraText *manual, GPContext *context
 {
 	strcpy(manual->text,
 	_(
-        "This driver supports cameras with Jeilin jl2005a chip \n"
+	"This driver supports cameras with Jeilin jl2005a chip \n"
 	"These cameras do not support deletion of photos, nor uploading\n"
 	"of data. \n"
 	"Decoding of compressed photos may or may not work well\n"
@@ -130,7 +130,7 @@ static int
 camera_about (Camera *camera, CameraText *about, GPContext *context)
 {
 	strcpy (about->text, _("jl2005a camera library\n"
-			    "Theodore Kilgore <kilgota@auburn.edu>\n"));
+		"Theodore Kilgore <kilgota@auburn.edu>\n"));
 	return GP_OK;
 }
 
@@ -300,10 +300,9 @@ camera_exit (Camera *camera, GPContext *context)
 	GP_DEBUG ("jl2005a camera_exit");
 	jl2005a_reset(camera, camera->port);
 	gp_port_close(camera->port);
-	if (camera->pl) {
-		free (camera->pl);
-		camera->pl = NULL;
-	}
+	free (camera->pl);
+	camera->pl = NULL;
+
 	return GP_OK;
 }
 

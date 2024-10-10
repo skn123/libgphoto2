@@ -13,7 +13,6 @@ on:
 env:
   LC_ALL: C
   COMMON_CONFIGURE_FLAGS: >-
-    --disable-silent-rules
     --enable-vusb
     --with-camlibs=everything
     SLEEP=no
@@ -59,7 +58,7 @@ jobs:
 
       - name: 'Install build requirements (Linux)'
         if: runner.os == 'Linux'
-        run: sudo apt-get install -y autopoint gettext libusb-1.0-0-dev libcurl4-openssl-dev libgd-dev
+        run: sudo apt-get install -y autopoint gettext libusb-1.0-0-dev libcurl4-openssl-dev libgd-dev libltdl-dev
 
       - name: 'Install build requirements (macOS)'
         if: runner.os == 'macOS'

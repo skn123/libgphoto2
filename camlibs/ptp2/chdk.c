@@ -41,7 +41,6 @@
 #include "ptp.h"
 #include "ptp-bugs.h"
 #include "ptp-private.h"
-#include "ptp-pack.c"
 
 /* CHDK support */
 
@@ -117,19 +116,19 @@ chdk_generic_script_run (
 				case PTP_CHDK_TYPE_STRING:
 					GP_LOG_D("string %s", msg->data);
 					if (*table) {
-						*table = realloc(*table,strlen(*table)+strlen(msg->data)+1);
+						C_MEM (*table = realloc(*table,strlen(*table)+strlen(msg->data)+1));
 						strcat(*table,msg->data);
 					} else {
-						*table = strdup(msg->data);
+						C_MEM (*table = strdup(msg->data));
 					}
 					break;
 				case PTP_CHDK_TYPE_TABLE:
 					GP_LOG_D("table %s", msg->data);
 					if (*table) {
-						*table = realloc(*table,strlen(*table)+strlen(msg->data)+1);
+						C_MEM (*table = realloc(*table,strlen(*table)+strlen(msg->data)+1));
 						strcat(*table,msg->data);
 					} else {
-						*table = strdup(msg->data);
+						C_MEM (*table = strdup(msg->data));
 					}
 					break;
 				default: GP_LOG_E("unknown chdk msg->type %d", msg->subtype);break;
@@ -164,7 +163,7 @@ chdk_generic_script_run (
 
 static int
 chdk_list_func (CameraFilesystem *fs, const char *folder, CameraList *list,
-                void *data, GPContext *context, int dirsonly)
+		void *data, GPContext *context, int dirsonly)
 {
 	Camera *camera = (Camera *)data;
 	PTPParams		*params = &camera->pl->params;
@@ -178,13 +177,11 @@ chdk_list_func (CameraFilesystem *fs, const char *folder, CameraList *list,
 	char			*xfolder;
 
 	/* strip leading / of folders, except for the root folder */
-	xfolder=strdup(folder);
+	C_MEM (xfolder=strdup(folder));
 	if (strlen(folder)>2 && (xfolder[strlen(xfolder)-1] == '/'))
 		xfolder[strlen(xfolder)-1] = '\0';
 
-	C_MEM (lua = malloc(strlen(luascript)+strlen(xfolder)+1));
-
-	sprintf(lua,luascript,xfolder);
+	lua = aprintf(luascript, xfolder);
 	free(xfolder);
 
 	ret = chdk_generic_script_run (params, lua, &table, &retint, context);
@@ -250,7 +247,7 @@ nexttable:
 					name = t+strlen("name=.");
 					s = strchr(name,'"');
 					if (s) *s='\0';
-					name = strdup(name);
+					C_MEM (name = strdup(name));
 					GP_LOG_D("name is %s", name);
 					*s = '"';
 				}
@@ -302,7 +299,7 @@ nexttable:
 
 static int
 chdk_file_list_func (CameraFilesystem *fs, const char *folder, CameraList *list,
-                void *data, GPContext *context)
+		void *data, GPContext *context)
 {
 	return chdk_list_func(fs,folder,list,data,context,FALSE);
 }
@@ -310,14 +307,14 @@ chdk_file_list_func (CameraFilesystem *fs, const char *folder, CameraList *list,
 
 static int
 chdk_folder_list_func (CameraFilesystem *fs, const char *folder, CameraList *list,
-                  void *data, GPContext *context)
+		void *data, GPContext *context)
 {
 	return chdk_list_func(fs,folder,list,data,context,TRUE);
 }
 
 static int
 chdk_get_info_func (CameraFilesystem *fs, const char *folder, const char *filename,
-               CameraFileInfo *info, void *data, GPContext *context)
+		CameraFileInfo *info, void *data, GPContext *context)
 {
 	Camera *camera = (Camera *)data;
 	PTPParams		*params = &camera->pl->params;
@@ -327,8 +324,7 @@ chdk_get_info_func (CameraFilesystem *fs, const char *folder, const char *filena
 	const char 		*luascript = "\nreturn os.stat('A%s/%s')";
 	char 			*lua = NULL;
 
-	C_MEM (lua = malloc(strlen(luascript)+strlen(folder)+strlen(filename)+1));
-	sprintf(lua,luascript,folder,filename);
+	lua = aprintf(luascript, folder, filename);
 	ret = chdk_generic_script_run (params, lua, &table, &retint, context);
 	free (lua);
 	if (table) {
@@ -353,7 +349,7 @@ chdk_get_info_func (CameraFilesystem *fs, const char *folder, const char *filena
 
 static int
 chdk_delete_file_func (CameraFilesystem *fs, const char *folder,
-                        const char *filename, void *data, GPContext *context)
+		const char *filename, void *data, GPContext *context)
 {
 	Camera *camera = (Camera *)data;
 	PTPParams		*params = &camera->pl->params;
@@ -361,8 +357,7 @@ chdk_delete_file_func (CameraFilesystem *fs, const char *folder,
 	const char 		*luascript = "\nreturn os.remove('A%s/%s')";
 	char 			*lua = NULL;
 
-	C_MEM (lua = malloc(strlen(luascript)+strlen(folder)+strlen(filename)+1));
-	sprintf(lua,luascript,folder,filename);
+	lua = aprintf(luascript, folder, filename);
 	ret = chdk_generic_script_run (params, lua, NULL, NULL, context);
 	free (lua);
 	return ret;
@@ -370,13 +365,13 @@ chdk_delete_file_func (CameraFilesystem *fs, const char *folder,
 
 static int
 chdk_get_file_func (CameraFilesystem *fs, const char *folder, const char *filename,
-               CameraFileType type, CameraFile *file, void *data,
-               GPContext *context)
+		CameraFileType type, CameraFile *file, void *data,
+		GPContext *context)
 {
-        Camera 			*camera = data;
+	Camera 			*camera = data;
 	PTPParams		*params = &camera->pl->params;
-	uint16_t        	ret;
-	PTPDataHandler  	handler;
+	uint16_t		ret;
+	PTPDataHandler		handler;
 	char 			*fn;
 
 	fn = malloc(1+strlen(folder)+1+strlen(filename)+1);
@@ -468,13 +463,13 @@ return false,'already in play'\n\
 static int
 chdk_camera_about (Camera *camera, CameraText *text, GPContext *context)
 {
-        snprintf (text->text, sizeof(text->text),
-         _("PTP2 / CHDK driver\n"
-           "(c) 2015-%d by Marcus Meissner <marcus@jet.franken.de>.\n"
-           "This is a PTP subdriver that supports CHDK using Canon cameras.\n"
-           "\n"
-           "Enjoy!"), 2015);
-        return GP_OK;
+	snprintf (text->text, sizeof(text->text),
+		_("PTP2 / CHDK driver\n"
+		"(c) 2015-%d by Marcus Meissner <marcus@jet.franken.de>.\n"
+		"This is a PTP subdriver that supports CHDK using Canon cameras.\n"
+		"\n"
+		"Enjoy!"), 2015);
+	return GP_OK;
 }
 
 static int
@@ -486,7 +481,7 @@ chdk_camera_summary (Camera *camera, CameraText *text, GPContext *context)
 	int		major, minor, retint;
 
 	C_PTP (ptp_chdk_get_version (params, &major, &minor));
-        sprintf (s, _("CHDK %d.%d Status:\n"), major, minor ); s += strlen(s);
+	sprintf (s, _("CHDK %d.%d Status:\n"), major, minor ); s += strlen(s);
 
 	ret = chdk_generic_script_run (params, "return get_mode()", NULL, &retint, context);
 	sprintf (s, _("Mode: %d\n"), retint); s += strlen(s);
@@ -512,7 +507,7 @@ chdk_camera_summary (Camera *camera, CameraText *text, GPContext *context)
 
 	ret = chdk_generic_script_run (params, "return get_flash_mode()", NULL, &retint, context);
 	sprintf (s, _("Flash Mode: %d\n"), retint); s += strlen(s);
-        return ret;
+	return ret;
 /*
 Mode: 256
 SV96: 603, ISO: 243
@@ -535,8 +530,8 @@ typedef int (*put_func) (PTPParams *, CameraWidget *, GPContext *);
 struct submenu {
 	char		*label;
 	char		*name;
-        get_func	getfunc;
-        put_func	putfunc;
+	get_func	getfunc;
+	put_func	putfunc;
 };
 
 static int
@@ -745,11 +740,11 @@ chdk_get_ev(CONFIG_GET_ARGS) {
 
 	CR (chdk_generic_script_run (params, "return get_ev()", NULL, &retint, context));
 	CR (gp_widget_new (GP_WIDGET_RANGE, _(menu->label), widget));
-        gp_widget_set_range (*widget,
-                -5.0,
-                5.0,
-                1.0/6.0
-        );
+	gp_widget_set_range (*widget,
+		-5.0,
+		5.0,
+		1.0/6.0
+	);
 	val = retint/96.0;
 	return gp_widget_set_value (*widget, &val);
 }
@@ -981,43 +976,43 @@ chdk_put_mflock(CONFIG_PUT_ARGS) {
 }
 
 static struct {
-        char    *name;
-        char    *label;
+	char    *name;
+	char    *label;
 } chdkonoff[] = {
-        {"on", N_("On") },
-        {"off", N_("Off") },
+	{"on", N_("On") },
+	{"off", N_("Off") },
 };
 
 static int
 chdk_get_onoff(CONFIG_GET_ARGS) {
-        unsigned int	i;
-        char		buf[1024];
+	unsigned int	i;
+	char		buf[1024];
 
-        gp_widget_new (GP_WIDGET_RADIO, _(menu->label), widget);
-        gp_widget_set_name (*widget, menu->name);
-        if (GP_OK != gp_setting_get("ptp2","chdk", buf))
-                strcpy(buf,"off");
-        for (i=0;i<sizeof (chdkonoff)/sizeof (chdkonoff[i]);i++) {
-                gp_widget_add_choice (*widget, _(chdkonoff[i].label));
-                if (!strcmp (buf,chdkonoff[i].name))
-                        gp_widget_set_value (*widget, _(chdkonoff[i].label));
-        }
-        return GP_OK;
+	gp_widget_new (GP_WIDGET_RADIO, _(menu->label), widget);
+	gp_widget_set_name (*widget, menu->name);
+	if (GP_OK != gp_setting_get("ptp2","chdk", buf))
+		strcpy(buf,"off");
+	for (i=0;i<ARRAYSIZE(chdkonoff);i++) {
+		gp_widget_add_choice (*widget, _(chdkonoff[i].label));
+		if (!strcmp (buf,chdkonoff[i].name))
+			gp_widget_set_value (*widget, _(chdkonoff[i].label));
+	}
+	return GP_OK;
 }
 
 static int
 chdk_put_onoff(CONFIG_PUT_ARGS) {
-        unsigned int	i;
-        char		*val;
+	unsigned int	i;
+	char		*val;
 
-        CR (gp_widget_get_value(widget, &val));
-        for (i=0;i<sizeof(chdkonoff)/sizeof(chdkonoff[i]);i++) {
-                if (!strcmp( val, _(chdkonoff[i].label))) {
-                        gp_setting_set("ptp2","chdk",chdkonoff[i].name);
-                        break;
-                }
-        }
-        return GP_OK;
+	CR (gp_widget_get_value(widget, &val));
+	for (i=0;i<ARRAYSIZE(chdkonoff);i++) {
+		if (!strcmp( val, _(chdkonoff[i].label))) {
+			gp_setting_set("ptp2","chdk",chdkonoff[i].name);
+			break;
+		}
+	}
+	return GP_OK;
 }
 
 
@@ -1051,7 +1046,7 @@ chdk_camera_get_config (Camera *camera, CameraWidget **window, GPContext *contex
 
 	CR(camera_prepare_chdk_capture(camera, context));
 
-        gp_widget_new (GP_WIDGET_WINDOW, _("Camera and Driver Configuration"), window);
+	gp_widget_new (GP_WIDGET_WINDOW, _("Camera and Driver Configuration"), window);
 	gp_widget_set_name (*window, "main");
 	gp_widget_new (GP_WIDGET_SECTION, _("Image Settings"), &menu);
 	gp_widget_set_name (menu, "imgsettings");
@@ -1083,7 +1078,7 @@ chdk_camera_set_config (Camera *camera, CameraWidget *window, GPContext *context
 			continue;
 		if (!gp_widget_changed (widget))
 			continue;
-	        gp_widget_set_changed (widget, FALSE);
+		gp_widget_set_changed (widget, FALSE);
 		ret = imgsettings[i].putfunc(params,widget,context);
 		if (ret != GP_OK) {
 			GP_LOG_E("error putting %s menu", imgsettings[i].name);
@@ -1097,7 +1092,7 @@ static int
 chdk_camera_exit (Camera *camera, GPContext *context)
 {
 	camera_unprepare_chdk_capture(camera, context);
-        return GP_OK;
+	return GP_OK;
 }
 
 static int
@@ -1138,7 +1133,7 @@ chdk_camera_capture (Camera *camera, CameraCaptureType type, CameraFilePath *pat
 		ret = GP_ERROR;
 	}
 	free (table);
-        return ret;
+	return ret;
 }
 
 #ifdef HAVE_LIBJPEG
@@ -1229,8 +1224,8 @@ static void yuv_live_to_jpeg(unsigned char *p_yuv,
 	jpeg_destroy_compress (&cinfo);
 
 	gp_file_append (file, (char*)outbuf, outlen);
-      	gp_file_set_mime_type (file, GP_MIME_JPEG);
-      	gp_file_set_name (file, "chdk_preview.jpg");
+	gp_file_set_mime_type (file, GP_MIME_JPEG);
+	gp_file_set_name (file, "chdk_preview.jpg");
 
 	free (outbuf);
 	free (tmprowbuf);
@@ -1261,8 +1256,7 @@ static void yuv_live_to_ppm (unsigned char *p_yuv,
 ) {
 	const unsigned char  *p_row = p_yuv;
 	const unsigned char  *p;
-	unsigned int	      row, x;
-	unsigned int	      row_inc;
+	int		      row, x, row_inc;
 	int		      pshift, xshift, skip;
 	char		      ppm_header[32];
 	uint8_t		      rgb[6];
@@ -1322,8 +1316,8 @@ static void yuv_live_to_ppm (unsigned char *p_yuv,
 			}
 		}
 	}
-      	gp_file_set_mime_type (file, GP_MIME_PPM);
-      	gp_file_set_name (file, "chdk_preview.ppm");
+	gp_file_set_mime_type (file, GP_MIME_PPM);
+	gp_file_set_name (file, "chdk_preview.ppm");
 }
 #endif
 
@@ -1344,8 +1338,8 @@ chdk_camera_capture_preview (Camera *camera, CameraFile *file, GPContext *contex
 	memset (&vpd, 0, sizeof (bmd));
 
 	CR (camera_prepare_chdk_capture (camera, context));
-      	C_PTP_REP_MSG (ptp_chdk_get_live_data (params, flags, &data, &size),
-      		       _("CHDK get live data failed"));
+	C_PTP_REP_MSG (ptp_chdk_get_live_data (params, flags, &data, &size),
+			_("CHDK get live data failed"));
 	if (ptp_chdk_parse_live_data (params, data, size, &header, &vpd, &bmd) != PTP_RC_OK) {
 		gp_context_error (context, _("CHDK get live data failed: incomplete data (%d bytes) returned"), size);
 		return GP_ERROR;
@@ -1358,23 +1352,23 @@ chdk_camera_capture_preview (Camera *camera, CameraFile *file, GPContext *contex
 			 vpd.visible_height, vpd.fb_type, file);
 #endif
 
-      	free (data);
-      	gp_file_set_mtime (file, time (NULL));
-      	return GP_OK;
+	free (data);
+	gp_file_set_mtime (file, time (NULL));
+	return GP_OK;
 }
 
 int
 chdk_init(Camera *camera, GPContext *context) {
-        camera->functions->about = chdk_camera_about;
-        camera->functions->exit = chdk_camera_exit;
-        camera->functions->capture = chdk_camera_capture;
-        camera->functions->summary = chdk_camera_summary;
-        camera->functions->get_config = chdk_camera_get_config;
-        camera->functions->set_config = chdk_camera_set_config;
-        camera->functions->capture_preview = chdk_camera_capture_preview;
+	camera->functions->about = chdk_camera_about;
+	camera->functions->exit = chdk_camera_exit;
+	camera->functions->capture = chdk_camera_capture;
+	camera->functions->summary = chdk_camera_summary;
+	camera->functions->get_config = chdk_camera_get_config;
+	camera->functions->set_config = chdk_camera_set_config;
+	camera->functions->capture_preview = chdk_camera_capture_preview;
 /*
-        camera->functions->trigger_capture = camera_trigger_capture;
-        camera->functions->wait_for_event = camera_wait_for_event;
+	camera->functions->trigger_capture = camera_trigger_capture;
+	camera->functions->wait_for_event = camera_wait_for_event;
 */
 
 	gp_filesystem_set_funcs ( camera->fs, &chdk_fsfuncs, camera);

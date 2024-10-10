@@ -13,7 +13,7 @@
  * ./fuzzer -detect_leaks=0 CORPUS/
  *
  * FIXME:
- * - currently this seems to have memory leaks, it slows down and gets more and more memory over time. 
+ * - currently this seems to have memory leaks, it slows down and gets more and more memory over time.
  *   restarting cures it for a while
  * - It crashes on start in 80% of the cases. You might need retry multiple times to start it.
  *   reason is i think the fuzzer creates a bitmap in an area where the loaded camlibs are mapped into after the fact.
@@ -32,8 +32,7 @@
  *
  */
 
-void errordumper(GPLogLevel level, const char *domain, const char *str,
-                 void *data) {
+void errordumper(GPLogLevel level, const char *domain, const char *str, void *data) {
 	/* Do not log ... but let it appear here so we discover debug paths */
 	//fprintf(stderr, "%s:%s\n", domain, str);
 }
@@ -72,11 +71,7 @@ recursive_directory(Camera *camera, const char *folder, GPContext *context, int 
 
 		if (!strlen(newfolder)) continue;
 
-		buf = (char*)malloc (strlen(folder) + 1 + strlen(newfolder) + 1);
-		strcpy(buf, folder);
-		if (strcmp(folder,"/"))		/* avoid double / */
-			strcat(buf, "/");
-		strcat(buf, newfolder);
+		buf = aprintf("%s%s%s", folder, strcmp(folder, "/") ? "/" : "", newfolder);
 
 		//fprintf(stderr,"newfolder=%s\n", newfolder);
 
@@ -177,7 +172,7 @@ int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
 	/*CameraFilePath		path;*/
 	CameraList			*list;
 
-        gp_log_add_func(GP_LOG_DEBUG, errordumper, NULL);
+	gp_log_add_func(GP_LOG_DEBUG, errordumper, NULL);
 
 	if (!gpinfolist) {
 		gp_port_info_list_new (&gpinfolist);
@@ -280,7 +275,7 @@ int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size) {
 
 		ret = gp_camera_wait_for_event(camera, 1, &evttype, &data, context);
 		if (ret < GP_OK) break;
-		if (data) free (data);
+		free (data);
 		if (evttype == GP_EVENT_TIMEOUT) break;
 	}
 

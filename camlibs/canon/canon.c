@@ -385,7 +385,7 @@ replace_filename_extension(const char *filename, const char __unused__ *newext)
                 return NULL;
         }
         if ((unsigned int)(p - buf) < sizeof (buf) - 4) {
-                strncpy (p, ".THM", 4);
+                strncpy (p, ".THM", 5);
                 GP_DEBUG ("replace_filename_extension: New name for '%s' is '%s'",
                           filename, buf);
                 return buf;
@@ -437,7 +437,7 @@ filename_to_audio(const char *filename, const char __unused__ *newext)
                 return NULL;
         }
         if ((unsigned int)(p - buf) < sizeof (buf) - 4) {
-                strncpy (p, ".WAV", 4);
+                strncpy (p, ".WAV", 5);
                 GP_DEBUG ("filename_to_audio: New name for '%s' is '%s'",
                           filename, buf);
                 return buf;
@@ -1274,7 +1274,7 @@ canon_int_capture_preview (Camera *camera, unsigned char **data, unsigned int *l
  * canon_int_find_new_image:
  * @camera: Camera * to this camera
  * @initial_state: Camera directory dump before image capture
- * @initial_state_len: Length of before dump 
+ * @initial_state_len: Length of before dump
  * @final_state: Directory dump after image capture
  * @final_state_len: Length of after dump
  * @path: Will be filled in with the path and filename of the captured

@@ -1264,7 +1264,7 @@ ax203_encode_image(Camera *camera, int **src, char *dest, unsigned int dest_size
 		free (jpeg_dest);
 		/* Round size up to a multiple of 256 because of ax3003
 		   abfs size granularity. */
-                return (jpeg_size + 0xff) & ~0xff;
+		return (jpeg_size + 0xff) & ~0xff;
 #else
 		return GP_ERROR_NOT_SUPPORTED;
 #endif
@@ -1279,7 +1279,7 @@ static int
 ax203_defrag_memory(Camera *camera)
 {
 	char **raw_pictures;
-       	struct ax203_fileinfo *fileinfo;
+	struct ax203_fileinfo *fileinfo;
 	int i, count, ret = GP_OK;
 
 	count = ax203_read_filecount (camera);
@@ -1399,7 +1399,7 @@ static int
 ax203_build_used_mem_table(Camera *camera, struct ax203_fileinfo *table)
 {
 	int i, count, found = 0;
-       	struct ax203_fileinfo fileinfo;
+	struct ax203_fileinfo fileinfo;
 
 	count = ax203_read_filecount (camera);
 	if (count < 0) return count;

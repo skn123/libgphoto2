@@ -197,8 +197,8 @@ ptp_response(vcamera *cam, uint16_t code, int nparams, ...) {
 
 #define PTP_RC_OK					0x2001
 #define PTP_RC_GeneralError 				0x2002
-#define PTP_RC_SessionNotOpen          		 	0x2003
-#define PTP_RC_OperationNotSupported    		0x2005
+#define PTP_RC_SessionNotOpen			 	0x2003
+#define PTP_RC_OperationNotSupported			0x2005
 #define PTP_RC_InvalidStorageId				0x2008
 #define PTP_RC_InvalidObjectHandle			0x2009
 #define PTP_RC_DevicePropNotSupported			0x200A
@@ -209,11 +209,11 @@ ptp_response(vcamera *cam, uint16_t code, int nparams, ...) {
 #define PTP_RC_AccessDenied				0x200F
 #define PTP_RC_NoThumbnailPresent			0x2010
 #define PTP_RC_StoreNotAvailable			0x2013
-#define PTP_RC_SpecificationByFormatUnsupported         0x2014
+#define PTP_RC_SpecificationByFormatUnsupported		0x2014
 #define PTP_RC_InvalidParentObject			0x201A
 #define PTP_RC_InvalidDevicePropFormat			0x201B
 #define PTP_RC_InvalidParameter				0x201D
-#define PTP_RC_SessionAlreadyOpened     		0x201E
+#define PTP_RC_SessionAlreadyOpened			0x201E
 
 #define CHECK_PARAM_COUNT(x)											\
 	if (ptp->nparams != x) {										\
@@ -292,7 +292,7 @@ static struct ptp_map_functions {
 	{NIKON_D750,	ptp_functions_nikon_dslr,	sizeof(ptp_functions_nikon_dslr)/sizeof(ptp_functions_nikon_dslr[0])},
 };
 
-typedef union _PTPPropertyValue {
+typedef union _PTPPropValue {
 	char            *str;   /* common string, malloced */
 	uint8_t         u8;
 	int8_t          i8;
@@ -305,38 +305,38 @@ typedef union _PTPPropertyValue {
 	/* XXXX: 128 bit signed and unsigned missing */
 	struct array {
 		uint32_t        count;
-		union _PTPPropertyValue *v;     /* malloced, count elements */
+		union _PTPPropValue *v;     /* malloced, count elements */
 	} a;
-} PTPPropertyValue;
+} PTPPropValue;
 
 struct _PTPPropDescRangeForm {
-        PTPPropertyValue        MinimumValue;
-        PTPPropertyValue        MaximumValue;
-        PTPPropertyValue        StepSize;
+	PTPPropValue    MinValue;
+	PTPPropValue    MaxValue;
+	PTPPropValue    StepSize;
 };
 typedef struct _PTPPropDescRangeForm PTPPropDescRangeForm;
 
 /* Property Describing Dataset, Enum Form */
 
 struct _PTPPropDescEnumForm {
-        uint16_t                NumberOfValues;
-        PTPPropertyValue        *SupportedValue;        /* malloced */
+	uint16_t        NumberOfValues;
+	PTPPropValue    *SupportedValue;        /* malloced */
 };
 typedef struct _PTPPropDescEnumForm PTPPropDescEnumForm;
 
 /* Device Property Describing Dataset (DevicePropDesc) */
 
 struct _PTPDevicePropDesc {
-        uint16_t                DevicePropertyCode;
-        uint16_t                DataType;
-        uint8_t                 GetSet;
-        PTPPropertyValue        FactoryDefaultValue;
-        PTPPropertyValue        CurrentValue;
-        uint8_t                 FormFlag;
-        union   {
-                PTPPropDescEnumForm     Enum;
-                PTPPropDescRangeForm    Range;
-        } FORM;
+	uint16_t        DevicePropCode;
+	uint16_t        DataType;
+	uint8_t         GetSet;
+	PTPPropValue    DefaultValue;
+	PTPPropValue    CurrentValue;
+	uint8_t         FormFlag;
+	union {
+		PTPPropDescEnumForm     Enum;
+		PTPPropDescRangeForm    Range;
+	} FORM;
 };
 typedef struct _PTPDevicePropDesc PTPDevicePropDesc;
 
@@ -344,7 +344,7 @@ typedef struct _PTPDevicePropDesc PTPDevicePropDesc;
 // Perhaps vcamera.c should be moved to camlibs/ptp2 for easier sharing
 // in the future.
 static void
-ptp_free_devicepropvalue(uint16_t dt, PTPPropertyValue* dpd)
+ptp_free_devicepropvalue(uint16_t dt, PTPPropValue* dpd)
 {
 	if (dt == /* PTP_DTC_STR */ 0xFFFF) {
 		free(dpd->str);
@@ -358,12 +358,12 @@ ptp_free_devicepropdesc(PTPDevicePropDesc* dpd)
 {
 	uint16_t i;
 
-	ptp_free_devicepropvalue (dpd->DataType, &dpd->FactoryDefaultValue);
+	ptp_free_devicepropvalue (dpd->DataType, &dpd->DefaultValue);
 	ptp_free_devicepropvalue (dpd->DataType, &dpd->CurrentValue);
 	switch (dpd->FormFlag) {
 	case /* PTP_DPFF_Range */ 0x01:
-		ptp_free_devicepropvalue (dpd->DataType, &dpd->FORM.Range.MinimumValue);
-		ptp_free_devicepropvalue (dpd->DataType, &dpd->FORM.Range.MaximumValue);
+		ptp_free_devicepropvalue (dpd->DataType, &dpd->FORM.Range.MinValue);
+		ptp_free_devicepropvalue (dpd->DataType, &dpd->FORM.Range.MaxValue);
 		ptp_free_devicepropvalue (dpd->DataType, &dpd->FORM.Range.StepSize);
 		break;
 	case /* PTP_DPFF_Enumeration */ 0x02:
@@ -376,27 +376,27 @@ ptp_free_devicepropdesc(PTPDevicePropDesc* dpd)
 }
 
 static int ptp_battery_getdesc(vcamera*,PTPDevicePropDesc*);
-static int ptp_battery_getvalue(vcamera*,PTPPropertyValue*);
+static int ptp_battery_getvalue(vcamera*,PTPPropValue*);
 static int ptp_imagesize_getdesc(vcamera*,PTPDevicePropDesc*);
-static int ptp_imagesize_getvalue(vcamera*,PTPPropertyValue*);
+static int ptp_imagesize_getvalue(vcamera*,PTPPropValue*);
 static int ptp_datetime_getdesc(vcamera*,PTPDevicePropDesc*);
-static int ptp_datetime_getvalue(vcamera*,PTPPropertyValue*);
-static int ptp_datetime_setvalue(vcamera*,PTPPropertyValue*);
+static int ptp_datetime_getvalue(vcamera*,PTPPropValue*);
+static int ptp_datetime_setvalue(vcamera*,PTPPropValue*);
 static int ptp_shutterspeed_getdesc(vcamera*,PTPDevicePropDesc*);
-static int ptp_shutterspeed_getvalue(vcamera*,PTPPropertyValue*);
-static int ptp_shutterspeed_setvalue(vcamera*,PTPPropertyValue*);
+static int ptp_shutterspeed_getvalue(vcamera*,PTPPropValue*);
+static int ptp_shutterspeed_setvalue(vcamera*,PTPPropValue*);
 static int ptp_fnumber_getdesc(vcamera*,PTPDevicePropDesc*);
-static int ptp_fnumber_getvalue(vcamera*,PTPPropertyValue*);
-static int ptp_fnumber_setvalue(vcamera*,PTPPropertyValue*);
+static int ptp_fnumber_getvalue(vcamera*,PTPPropValue*);
+static int ptp_fnumber_setvalue(vcamera*,PTPPropValue*);
 static int ptp_exposurebias_getdesc(vcamera*,PTPDevicePropDesc*);
-static int ptp_exposurebias_getvalue(vcamera*,PTPPropertyValue*);
-static int ptp_exposurebias_setvalue(vcamera*,PTPPropertyValue*);
+static int ptp_exposurebias_getvalue(vcamera*,PTPPropValue*);
+static int ptp_exposurebias_setvalue(vcamera*,PTPPropValue*);
 
 static struct ptp_property {
 	int	code;
 	int	(*getdesc )(vcamera *cam, PTPDevicePropDesc*);
-	int	(*getvalue)(vcamera *cam, PTPPropertyValue*);
-	int	(*setvalue)(vcamera *cam, PTPPropertyValue*);
+	int	(*getvalue)(vcamera *cam, PTPPropValue*);
+	int	(*setvalue)(vcamera *cam, PTPPropValue*);
 } ptp_properties[] = {
 	{0x5001,	ptp_battery_getdesc, ptp_battery_getvalue, NULL },
 	{0x5003,	ptp_imagesize_getdesc, ptp_imagesize_getvalue, NULL },
@@ -453,10 +453,7 @@ read_directories(const char *path, struct ptp_dirent *parent) {
 		cur = malloc(sizeof(struct ptp_dirent));
 		if (!cur) break;
 		cur->name = strdup(gp_system_filename(de));
-		cur->fsname = malloc(strlen(path)+1+strlen(gp_system_filename(de))+1);
-		strcpy(cur->fsname,path);
-		strcat(cur->fsname,"/");
-		strcat(cur->fsname,gp_system_filename(de));
+		cur->fsname = aprintf("%s/%s", path, gp_system_filename(de));
 		cur->id = ptp_objectid++;
 		cur->next = first_dirent;
 		cur->parent = parent;
@@ -614,7 +611,7 @@ ptp_deviceinfo_write(vcamera *cam, ptpcontainer *ptp) {
 			opcodes[i+ptp_functions[0].nroffunctions] = ptp_functions[vendor].functions[i].code;
 	}
 
-	x += put_16bit_le_array(data+x,opcodes,cnt);	/* OperationsSupported */
+	x += put_16bit_le_array(data+x,opcodes,cnt);	/* Operations */
 	free (opcodes);
 
 	events[0] = 0x4002;
@@ -622,12 +619,12 @@ ptp_deviceinfo_write(vcamera *cam, ptpcontainer *ptp) {
 	events[2] = 0x4006;
 	events[3] = 0x400a;
 	events[4] = 0x400d;
-	x += put_16bit_le_array(data+x,events,sizeof(events)/sizeof(events[0]));	/* EventsSupported */
+	x += put_16bit_le_array(data+x,events,sizeof(events)/sizeof(events[0]));	/* Events */
 
 	devprops = malloc(sizeof(ptp_properties)/sizeof(ptp_properties[0])*sizeof(uint16_t));
 	for (i=0;i<sizeof(ptp_properties)/sizeof(ptp_properties[0]);i++)
 		devprops[i] = ptp_properties[i].code;
-	x += put_16bit_le_array(data+x,devprops,sizeof(ptp_properties)/sizeof(ptp_properties[0]));/* DevicePropertiesSupported */
+	x += put_16bit_le_array(data+x,devprops,sizeof(ptp_properties)/sizeof(ptp_properties[0]));/* DeviceProps */
 	free (devprops);
 
 	imageformats[0] = 0x3801;
@@ -889,7 +886,7 @@ ptp_getobjectinfo_write(vcamera *cam, ptpcontainer *ptp) {
 		cur = cur->next;
 	}
 	if (!cur) {
-		gp_log (GP_LOG_ERROR,__FUNCTION__, "invalid object id 0x%08x", ptp->params[0]);
+		gp_log (GP_LOG_ERROR,__FUNCTION__, "invalid object handle 0x%08x", ptp->params[0]);
 		ptp_response(cam,PTP_RC_InvalidObjectHandle,0);
 		return 1;
 	}
@@ -963,9 +960,9 @@ ptp_getobjectinfo_write(vcamera *cam, ptpcontainer *ptp) {
 #endif
 	x += put_16bit_le (data+x, ofc);
 	x += put_16bit_le (data+x, 0); 			/* ProtectionStatus, no protection */
-	x += put_32bit_le (data+x, cur->stbuf.st_size); /* ObjectCompressedSize */
+	x += put_32bit_le (data+x, cur->stbuf.st_size); /* ObjectSize */
 	x += put_16bit_le (data+x, thumbofc); 		/* ThumbFormat */
-	x += put_32bit_le (data+x, thumbsize); 		/* ThumbCompressedSize */
+	x += put_32bit_le (data+x, thumbsize); 		/* ThumbSize */
 	x += put_32bit_le (data+x, thumbwidth); 	/* ThumbPixWidth */
 	x += put_32bit_le (data+x, thumbheight);	/* ThumbPixHeight */
 	x += put_32bit_le (data+x, imagewidth); 	/* ImagePixWidth */
@@ -1015,7 +1012,7 @@ ptp_getobject_write(vcamera *cam, ptpcontainer *ptp) {
 		cur = cur->next;
 	}
 	if (!cur) {
-		gp_log (GP_LOG_ERROR,__FUNCTION__, "invalid object id 0x%08x", ptp->params[0]);
+		gp_log (GP_LOG_ERROR,__FUNCTION__, "invalid object handle 0x%08x", ptp->params[0]);
 		ptp_response(cam,PTP_RC_InvalidObjectHandle,0);
 		return 1;
 	}
@@ -1036,7 +1033,7 @@ ptp_getthumb_write(vcamera *cam, ptpcontainer *ptp) {
 	unsigned char 		*data;
 	struct ptp_dirent	*cur;
 #ifdef HAVE_LIBEXIF
-        ExifData		*ed;
+	ExifData		*ed;
 #endif
 
 	CHECK_SEQUENCE_NUMBER();
@@ -1049,7 +1046,7 @@ ptp_getthumb_write(vcamera *cam, ptpcontainer *ptp) {
 		cur = cur->next;
 	}
 	if (!cur) {
-		gp_log (GP_LOG_ERROR,__FUNCTION__, "invalid object id 0x%08x", ptp->params[0]);
+		gp_log (GP_LOG_ERROR,__FUNCTION__, "invalid object handle 0x%08x", ptp->params[0]);
 		ptp_response(cam,PTP_RC_InvalidObjectHandle,0);
 		return 1;
 	}
@@ -1218,7 +1215,7 @@ ptp_deleteobject_write(vcamera *cam, ptpcontainer *ptp) {
 		cur = cur->next;
 	}
 	if (!cur) {
-		gp_log (GP_LOG_ERROR,__FUNCTION__, "invalid object id 0x%08x", ptp->params[0]);
+		gp_log (GP_LOG_ERROR,__FUNCTION__, "invalid object handle 0x%08x", ptp->params[0]);
 		ptp_response(cam,PTP_RC_InvalidObjectHandle,0);
 		return 1;
 	}
@@ -1247,7 +1244,7 @@ ptp_deleteobject_write(vcamera *cam, ptpcontainer *ptp) {
 
 
 static int
-put_propval (unsigned char *data, uint16_t type, PTPPropertyValue *val) {
+put_propval (unsigned char *data, uint16_t type, PTPPropValue *val) {
 	switch (type) {
 	case 0x1:	return put_8bit_le (data, val->i8);
 	case 0x2:	return put_8bit_le (data, val->u8);
@@ -1262,7 +1259,7 @@ put_propval (unsigned char *data, uint16_t type, PTPPropertyValue *val) {
 }
 
 static int
-get_propval (unsigned char *data, unsigned int len, uint16_t type, PTPPropertyValue *val) {
+get_propval (unsigned char *data, unsigned int len, uint16_t type, PTPPropValue *val) {
 #define CHECK_SIZE(x) if (len < x) return 0;
 	switch (type) {
 	case 0x1:	CHECK_SIZE(1);
@@ -1317,17 +1314,17 @@ ptp_getdevicepropdesc_write(vcamera *cam, ptpcontainer *ptp) {
 	data = malloc(2000);
 	ptp_properties[i].getdesc (cam, &desc);
 
-	x += put_16bit_le (data+x, desc.DevicePropertyCode);
+	x += put_16bit_le (data+x, desc.DevicePropCode);
 	x += put_16bit_le (data+x, desc.DataType);
 	x += put_8bit_le  (data+x, desc.GetSet);
-	x += put_propval  (data+x, desc.DataType, &desc.FactoryDefaultValue);
+	x += put_propval  (data+x, desc.DataType, &desc.DefaultValue);
 	x += put_propval  (data+x, desc.DataType, &desc.CurrentValue);
 	x += put_8bit_le  (data+x, desc.FormFlag);
 	switch (desc.FormFlag) {
 	case 0:	break;
 	case 1:	/* range */
-		x += put_propval (data+x, desc.DataType, &desc.FORM.Range.MinimumValue);
-		x += put_propval (data+x, desc.DataType, &desc.FORM.Range.MaximumValue);
+		x += put_propval (data+x, desc.DataType, &desc.FORM.Range.MinValue);
+		x += put_propval (data+x, desc.DataType, &desc.FORM.Range.MaxValue);
 		x += put_propval (data+x, desc.DataType, &desc.FORM.Range.StepSize);
 		break;
 	case 2:	/* ENUM */
@@ -1349,7 +1346,7 @@ static int
 ptp_getdevicepropvalue_write(vcamera *cam, ptpcontainer *ptp) {
 	unsigned char*		data;
 	int			i, x = 0;
-	PTPPropertyValue	val;
+	PTPPropValue		val;
 	PTPDevicePropDesc	desc;
 
 	CHECK_SEQUENCE_NUMBER();
@@ -1530,7 +1527,7 @@ ptp_vusb_write(vcamera *cam, ptpcontainer *ptp) {
 static int
 ptp_setdevicepropvalue_write_data(vcamera *cam, ptpcontainer *ptp, unsigned char *data, unsigned int len) {
 	int			i;
-	PTPPropertyValue	val;
+	PTPPropValue		val;
 	PTPDevicePropDesc	desc;
 
 	CHECK_SEQUENCE_NUMBER();
@@ -1566,21 +1563,21 @@ ptp_setdevicepropvalue_write_data(vcamera *cam, ptpcontainer *ptp, unsigned char
 /**************************  Properties *****************************************************/
 static int
 ptp_battery_getdesc (vcamera* cam, PTPDevicePropDesc *desc) {
-	desc->DevicePropertyCode	= 0x5001;
+	desc->DevicePropCode		= 0x5001;
 	desc->DataType			= 2;	/* uint8 */
 	desc->GetSet			= 0;	/* Get only */
-	desc->FactoryDefaultValue.u8	= 50;
+	desc->DefaultValue.u8		= 50;
 	desc->CurrentValue.u8		= 50;
-        desc->FormFlag			= 0x01; /* range */
-	desc->FORM.Range.MinimumValue.u8= 0;
-	desc->FORM.Range.MaximumValue.u8= 100;
+	desc->FormFlag			= 0x01; /* range */
+	desc->FORM.Range.MinValue.u8	= 0;
+	desc->FORM.Range.MaxValue.u8	= 100;
 	desc->FORM.Range.StepSize.u8	= 1;
 	ptp_inject_interrupt (cam, 1000, 0x4006, 1, 0x5001, 0xffffffff);
 	return 1;
 }
 
 static int
-ptp_battery_getvalue (vcamera* cam, PTPPropertyValue *val) {
+ptp_battery_getvalue (vcamera* cam, PTPPropValue *val) {
 	val->u8 = 50;
 	ptp_inject_interrupt (cam, 1000, 0x4006, 1, 0x5001, 0xffffffff);
 	return 1;
@@ -1588,12 +1585,12 @@ ptp_battery_getvalue (vcamera* cam, PTPPropertyValue *val) {
 
 static int
 ptp_imagesize_getdesc (vcamera* cam, PTPDevicePropDesc *desc) {
-	desc->DevicePropertyCode		= 0x5003;
+	desc->DevicePropCode		= 0x5003;
 	desc->DataType				= 0xffff;	/* STR */
 	desc->GetSet				= 0;		/* Get only */
-	desc->FactoryDefaultValue.str		= strdup("640x480");
+	desc->DefaultValue.str			= strdup("640x480");
 	desc->CurrentValue.str			= strdup("640x480");
-        desc->FormFlag				= 0x02; /* enum */
+	desc->FormFlag				= 0x02; /* enum */
 	desc->FORM.Enum.NumberOfValues 		= 3;
 	desc->FORM.Enum.SupportedValue 		= malloc(3*sizeof(desc->FORM.Enum.SupportedValue[0]));
 	desc->FORM.Enum.SupportedValue[0].str	= strdup("640x480");
@@ -1605,7 +1602,7 @@ ptp_imagesize_getdesc (vcamera* cam, PTPDevicePropDesc *desc) {
 }
 
 static int
-ptp_imagesize_getvalue (vcamera* cam, PTPPropertyValue *val) {
+ptp_imagesize_getvalue (vcamera* cam, PTPPropValue *val) {
 	val->str = strdup("640x480");
 	ptp_inject_interrupt (cam, 1000, 0x4006, 1, 0x5003, 0xffffffff);
 	return 1;
@@ -1613,13 +1610,13 @@ ptp_imagesize_getvalue (vcamera* cam, PTPPropertyValue *val) {
 
 static int
 ptp_shutterspeed_getdesc (vcamera* cam, PTPDevicePropDesc *desc) {
-	desc->DevicePropertyCode		= 0x500D;
+	desc->DevicePropCode		= 0x500D;
 	desc->DataType				= 0x0006;	/* UINT32 */
 	desc->GetSet				= 1;		/* Get/Set */
 	if (!cam->shutterspeed) cam->shutterspeed = 100; /* 1/100 * 10000 */
-	desc->FactoryDefaultValue.u32		= cam->shutterspeed;
+	desc->DefaultValue.u32			= cam->shutterspeed;
 	desc->CurrentValue.u32			= cam->shutterspeed;
-        desc->FormFlag				= 0x02; /* enum */
+	desc->FormFlag				= 0x02; /* enum */
 	desc->FORM.Enum.NumberOfValues 		= 9;
 	desc->FORM.Enum.SupportedValue 		= malloc(desc->FORM.Enum.NumberOfValues*sizeof(desc->FORM.Enum.SupportedValue[0]));
 	desc->FORM.Enum.SupportedValue[0].u32	= 10000;
@@ -1637,14 +1634,14 @@ ptp_shutterspeed_getdesc (vcamera* cam, PTPDevicePropDesc *desc) {
 }
 
 static int
-ptp_shutterspeed_getvalue (vcamera* cam, PTPPropertyValue *val) {
+ptp_shutterspeed_getvalue (vcamera* cam, PTPPropValue *val) {
 	val->u32 = cam->shutterspeed;
 	ptp_inject_interrupt (cam, 1000, 0x4006, 1, 0x500d, 0xffffffff);
 	return 1;
 }
 
 static int
-ptp_shutterspeed_setvalue (vcamera* cam, PTPPropertyValue *val) {
+ptp_shutterspeed_setvalue (vcamera* cam, PTPPropValue *val) {
 	ptp_inject_interrupt (cam, 1000, 0x4006, 1, 0x500d, 0xffffffff);
 	gp_log (GP_LOG_DEBUG, __FUNCTION__, "got %d as value", val->u32);
 	cam->shutterspeed = val->u32;
@@ -1653,13 +1650,13 @@ ptp_shutterspeed_setvalue (vcamera* cam, PTPPropertyValue *val) {
 
 static int
 ptp_fnumber_getdesc (vcamera* cam, PTPDevicePropDesc *desc) {
-	desc->DevicePropertyCode		= 0x5007;
+	desc->DevicePropCode		= 0x5007;
 	desc->DataType				= 0x0004;	/* UINT16 */
 	desc->GetSet				= 1;		/* Get/Set */
 	if (!cam->fnumber) cam->fnumber = 280; /* 2.8 * 100 */
-	desc->FactoryDefaultValue.u16		= cam->fnumber;
+	desc->DefaultValue.u16			= cam->fnumber;
 	desc->CurrentValue.u16			= cam->fnumber;
-        desc->FormFlag				= 0x02; /* enum */
+	desc->FormFlag				= 0x02; /* enum */
 	desc->FORM.Enum.NumberOfValues 		= 18;
 	desc->FORM.Enum.SupportedValue 		= malloc(desc->FORM.Enum.NumberOfValues*sizeof(desc->FORM.Enum.SupportedValue[0]));
 	desc->FORM.Enum.SupportedValue[0].u16	= 280;
@@ -1686,14 +1683,14 @@ ptp_fnumber_getdesc (vcamera* cam, PTPDevicePropDesc *desc) {
 }
 
 static int
-ptp_fnumber_getvalue (vcamera* cam, PTPPropertyValue *val) {
+ptp_fnumber_getvalue (vcamera* cam, PTPPropValue *val) {
 	val->u16 = cam->fnumber;
 	ptp_inject_interrupt (cam, 1000, 0x4006, 1, 0x5007, 0xffffffff);
 	return 1;
 }
 
 static int
-ptp_fnumber_setvalue (vcamera* cam, PTPPropertyValue *val) {
+ptp_fnumber_setvalue (vcamera* cam, PTPPropValue *val) {
 	ptp_inject_interrupt (cam, 1000, 0x4006, 1, 0x5007, 0xffffffff);
 	gp_log (GP_LOG_DEBUG, __FUNCTION__, "got %d as value", val->u16);
 	cam->fnumber = val->u16;
@@ -1702,13 +1699,13 @@ ptp_fnumber_setvalue (vcamera* cam, PTPPropertyValue *val) {
 
 static int
 ptp_exposurebias_getdesc (vcamera* cam, PTPDevicePropDesc *desc) {
-	desc->DevicePropertyCode		= 0x5010;
+	desc->DevicePropCode			= 0x5010;
 	desc->DataType				= 0x0003;	/* INT16 */
 	desc->GetSet				= 1;		/* Get/Set */
 	if (!cam->exposurebias) cam->exposurebias = 0; /* 0.0 */
-	desc->FactoryDefaultValue.i16		= cam->exposurebias;
+	desc->DefaultValue.i16			= cam->exposurebias;
 	desc->CurrentValue.i16			= cam->exposurebias;
-        desc->FormFlag				= 0x02; /* enum */
+	desc->FormFlag				= 0x02; /* enum */
 	desc->FORM.Enum.NumberOfValues 		= 13;
 	desc->FORM.Enum.SupportedValue 		= malloc(desc->FORM.Enum.NumberOfValues*sizeof(desc->FORM.Enum.SupportedValue[0]));
 	desc->FORM.Enum.SupportedValue[0].i16	= -3000;
@@ -1730,14 +1727,14 @@ ptp_exposurebias_getdesc (vcamera* cam, PTPDevicePropDesc *desc) {
 }
 
 static int
-ptp_exposurebias_getvalue (vcamera* cam, PTPPropertyValue *val) {
+ptp_exposurebias_getvalue (vcamera* cam, PTPPropValue *val) {
 	val->i16 = cam->exposurebias;
 	ptp_inject_interrupt (cam, 1000, 0x4006, 1, 0x5010, 0xffffffff);
 	return 1;
 }
 
 static int
-ptp_exposurebias_setvalue (vcamera* cam, PTPPropertyValue *val) {
+ptp_exposurebias_setvalue (vcamera* cam, PTPPropValue *val) {
 	ptp_inject_interrupt (cam, 1000, 0x4006, 1, 0x5010, 0xffffffff);
 	gp_log (GP_LOG_DEBUG, __FUNCTION__, "got %d as value", val->i16);
 	cam->exposurebias = val->i16;
@@ -1749,38 +1746,34 @@ static int
 ptp_datetime_getdesc (vcamera* cam, PTPDevicePropDesc *desc) {
 	struct tm		*tm;
 	time_t			xtime;
-	char			xdate[40];
 
-	desc->DevicePropertyCode	= 0x5011;
-	desc->DataType			= 0xffff;	/* string */
-	desc->GetSet			= 1;		/* get only */
+	desc->DevicePropCode	= 0x5011;
+	desc->DataType		= 0xffff;	/* string */
+	desc->GetSet		= 1;		/* get only */
 	time(&xtime);
 	tm = gmtime(&xtime);
-	sprintf(xdate,"%04d%02d%02dT%02d%02d%02d",tm->tm_year+1900,tm->tm_mon+1,tm->tm_mday,tm->tm_hour,tm->tm_min,tm->tm_sec);
-	desc->FactoryDefaultValue.str	= strdup (xdate);
-	desc->CurrentValue.str		= strdup (xdate);
-        desc->FormFlag			= 0; /* no form */
+	desc->DefaultValue.str	= aprintf("%04d%02d%02dT%02d%02d%02d",tm->tm_year+1900,tm->tm_mon+1,tm->tm_mday,tm->tm_hour,tm->tm_min,tm->tm_sec);
+	desc->CurrentValue.str	= strdup (desc->DefaultValue.str);
+	desc->FormFlag		= 0; /* no form */
 	/*ptp_inject_interrupt (cam, 1000, 0x4006, 1, 0x5011, 0xffffffff);*/
 	return 1;
 }
 
 static int
-ptp_datetime_getvalue (vcamera* cam, PTPPropertyValue *val) {
+ptp_datetime_getvalue (vcamera* cam, PTPPropValue *val) {
 	struct tm		*tm;
 	time_t			xtime;
-	char			xdate[40];
 
 	time(&xtime);
 	tm = gmtime(&xtime);
-	sprintf(xdate,"%04d%02d%02dT%02d%02d%02d",tm->tm_year+1900,tm->tm_mon+1,tm->tm_mday,tm->tm_hour,tm->tm_min,tm->tm_sec);
-	val->str = strdup (xdate);
+	val->str = aprintf("%04d%02d%02dT%02d%02d%02d",tm->tm_year + 1900,tm->tm_mon + 1,tm->tm_mday,tm->tm_hour,tm->tm_min,tm->tm_sec);
 	/*ptp_inject_interrupt (cam, 1000, 0x4006, 1, 0x5011, 0xffffffff);*/
 	return 1;
 }
 
 
 static int
-ptp_datetime_setvalue (vcamera* cam, PTPPropertyValue *val) {
+ptp_datetime_setvalue (vcamera* cam, PTPPropValue *val) {
 	gp_log (GP_LOG_DEBUG, __FUNCTION__, "got %s as value", val->str);
 	return 1;
 }

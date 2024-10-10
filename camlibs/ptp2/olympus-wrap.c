@@ -36,8 +36,8 @@
 
 #include "ptp.h"
 #include "ptp-private.h"
-#include "ptp-pack.c"
 #include "olympus-wrap.h"
+#include "ptp-pack.c"     /* only for ptp_pack_OI */
 
 #include <gphoto2/gphoto2-library.h>
 #include <gphoto2/gphoto2-setting.h>
@@ -56,12 +56,12 @@ typedef struct
 
 static uw32_t uw_value(unsigned int value) /* Convert from host-integer to uw32_t */
 {
-   uw32_t ret;
-   ret.c1 = (value       & 0x000000ffUL);
-   ret.c2 = (value >> 8  & 0x000000ffUL);
-   ret.c3 = (value >> 16 & 0x000000ffUL);
-   ret.c4 = (value >> 24 & 0x000000ffUL);
-   return ret;
+	uw32_t ret;
+	ret.c1 = (value       & 0x000000ffUL);
+	ret.c2 = (value >> 8  & 0x000000ffUL);
+	ret.c3 = (value >> 16 & 0x000000ffUL);
+	ret.c4 = (value >> 24 & 0x000000ffUL);
+	return ret;
 }
 
 static unsigned char
@@ -89,13 +89,13 @@ cmdbyte (unsigned char nr) {
  * 31 byte length */
 typedef struct
 {
-      uw4c_t magic;		/* The letters U S B C for packets sent to camera */
-      uw32_t tag;		/* The SCSI command tag */
-      uw32_t rw_length;		/* Length of data to be read or written next */
-      unsigned char flags;	/* in / out flag mostly */
-      unsigned char lun;	/* 0 here */
-      unsigned char length;	/* of the CDB... but 0x0c is used here in the traces */
-      unsigned char cdb[16];
+	uw4c_t magic;		/* The letters U S B C for packets sent to camera */
+	uw32_t tag;		/* The SCSI command tag */
+	uw32_t rw_length;		/* Length of data to be read or written next */
+	unsigned char flags;	/* in / out flag mostly */
+	unsigned char lun;	/* 0 here */
+	unsigned char length;	/* of the CDB... but 0x0c is used here in the traces */
+	unsigned char cdb[16];
 } uw_header_t;
 
 /*
@@ -106,20 +106,20 @@ typedef struct
  * linux/include/linux/usb/storage.h, struct bulk_cs_wrap */
 typedef struct
 {
-      uw4c_t magic;	/* The letters U S B S for packets from camera */
-      uw32_t tag;	/* A copy of whatever value the host made up */
-      uw32_t residue;	/* residual read? */
-      char   status;	/* status byte */
+	uw4c_t magic;	/* The letters U S B S for packets from camera */
+	uw32_t tag;	/* A copy of whatever value the host made up */
+	uw32_t residue;	/* residual read? */
+	char   status;	/* status byte */
 } uw_response_t;
 
 
 /* In the SCSI API, the CDB[16] block. */
 typedef struct
 {
-      unsigned char cmd;
-      char   zero1[8];
-      uw32_t length;
-      char   zero2[3];
+	unsigned char cmd;
+	char   zero1[8];
+	uw32_t length;
+	char   zero2[3];
 } uw_scsicmd_t;
 
 #pragma pack()
@@ -399,8 +399,8 @@ olympus_xml_transfer (PTPParams *params,
 	PTPContainer	ptp2;
 	int		res;
 	PTPObjectInfo	oi;
-        unsigned char	*resxml, *oidata = NULL;
-        uint32_t	size, newhandle;
+	unsigned char	*resxml, *oidata = NULL;
+	uint32_t	size, newhandle;
 	uint16_t	ret;
 	PTPParams	*outerparams = params->outer_params;
 
@@ -434,9 +434,9 @@ olympus_xml_transfer (PTPParams *params,
 			ret = ptp_getobject (outerparams, newhandle, (unsigned char**)&resxml);
 			if (ret != PTP_RC_OK)
 				return ret;
-			evxml = malloc (oi.ObjectCompressedSize + 1);
-			memcpy (evxml, resxml, oi.ObjectCompressedSize);
-			evxml[oi.ObjectCompressedSize] = 0x00;
+			evxml = malloc (oi.ObjectSize + 1);
+			memcpy (evxml, resxml, oi.ObjectSize);
+			evxml[oi.ObjectSize] = 0x00;
 
 			GP_LOG_D ("file content: %s", evxml);
 
@@ -455,7 +455,7 @@ olympus_xml_transfer (PTPParams *params,
 			oi.ObjectFormat		= PTP_OFC_Script;
 			oi.StorageID 		= 0x80000001;
 			oi.Filename 		= "HRSPONSE.X3C";
-			oi.ObjectCompressedSize	= strlen(evxml);
+			oi.ObjectSize		= strlen(evxml);
 			size = ptp_pack_OI(params, &oi, &oidata);
 			res = ptp_transaction (outerparams, &ptp2, PTP_DP_SENDDATA, size, &oidata, NULL);
 			if (res != PTP_RC_OK)
@@ -482,7 +482,7 @@ olympus_xml_transfer (PTPParams *params,
 		oi.ObjectFormat		= PTP_OFC_Script;
 		oi.StorageID 		= 0x80000001;
 		oi.Filename 		= "HREQUEST.X3C";
-		oi.ObjectCompressedSize	= strlen(cmdxml);
+		oi.ObjectSize		= strlen(cmdxml);
 
 /*
 "HRSPONSE.X3C" ... sent back to camera after receiving an event.
@@ -525,9 +525,9 @@ redo:
 		ret = ptp_getobject (outerparams, newhandle, (unsigned char**)&resxml);
 		if (ret != PTP_RC_OK)
 			return ret;
-		*inxml = malloc (oi.ObjectCompressedSize + 1);
-		memcpy (*inxml, resxml, oi.ObjectCompressedSize);
-		(*inxml)[oi.ObjectCompressedSize] = 0x00;
+		*inxml = malloc (oi.ObjectSize + 1);
+		memcpy (*inxml, resxml, oi.ObjectSize);
+		(*inxml)[oi.ObjectSize] = 0x00;
 
 		GP_LOG_D ("file content: %s", *inxml);
 		/* parse it */
@@ -671,7 +671,7 @@ xnext:
 
 #if 0
 static int
-parse_9301_value (PTPParams *params, const char *str, uint16_t type, PTPPropertyValue *propval) {
+parse_9301_value (PTPParams *params, const char *str, uint16_t type, PTPPropValue *propval) {
 	switch (type) {
 	case 6: { /*UINT32*/
 		unsigned int x;
@@ -798,9 +798,9 @@ parse_9301_propdesc (PTPParams *params, xmlNodePtr node, PTPDevicePropDesc *dpd)
 			dpd->GetSet = attr;
 			continue;
 		}
-		if (!strcmp((char*)next->name,"default")) {	/* propdesc.FactoryDefaultValue */
+		if (!strcmp((char*)next->name,"default")) {	/* propdesc.DefaultValue */
 			ptp_debug( params, "default value");
-			parse_9301_value (params, (char*)xmlNodeGetContent (next), type, &dpd->FactoryDefaultValue);
+			parse_9301_value (params, (char*)xmlNodeGetContent (next), type, &dpd->DefaultValue);
 			continue;
 		}
 		if (!strcmp((char*)next->name,"value")) {	/* propdesc.CurrentValue */
@@ -822,7 +822,7 @@ parse_9301_propdesc (PTPParams *params, xmlNodePtr node, PTPDevicePropDesc *dpd)
 				n++;
 			} while (s);
 			dpd->FORM.Enum.NumberOfValues = n;
-			dpd->FORM.Enum.SupportedValue = calloc (n , sizeof(PTPPropertyValue));
+			dpd->FORM.Enum.SupportedValue = calloc (n , sizeof(PTPPropValue));
 			s = (char*)xmlNodeGetContent (next);
 			i = 0;
 			do {
@@ -837,11 +837,11 @@ parse_9301_propdesc (PTPParams *params, xmlNodePtr node, PTPDevicePropDesc *dpd)
 			char *s = (char*)xmlNodeGetContent (next);
 			dpd->FormFlag = PTP_DPFF_Range;
 			ptp_debug( params, "range");
-			parse_9301_value (params, s, type, &dpd->FORM.Range.MinimumValue); /* should turn ' ' into \0? */
+			parse_9301_value (params, s, type, &dpd->FORM.Range.MinValue); /* should turn ' ' into \0? */
 			s = strchr(s,' ');
 			if (!s) continue;
 			s++;
-			parse_9301_value (params, s, type, &dpd->FORM.Range.MaximumValue); /* should turn ' ' into \0? */
+			parse_9301_value (params, s, type, &dpd->FORM.Range.MaxValue); /* should turn ' ' into \0? */
 			s = strchr(s,' ');
 			if (!s) continue;
 			s++;
@@ -858,8 +858,8 @@ parse_9301_propdesc (PTPParams *params, xmlNodePtr node, PTPDevicePropDesc *dpd)
 
 static int
 parse_1015_tree (xmlNodePtr node, uint16_t type) {
-	PTPPropertyValue	propval;
-	xmlNodePtr		next;
+	PTPPropValue	propval;
+	xmlNodePtr	next;
 
 	next = xmlFirstElementChild (node);
 	return parse_value ((char*)xmlNodeGetContent (next), type, &propval);
@@ -973,7 +973,7 @@ traverse_input_tree (PTPParams *params, xmlNodePtr node, PTPContainer *resp) {
 		if (!strcmp((char*)next->name,"param")) {
 			int x;
 			if (sscanf((char*)xmlNodeGetContent(next),"%x", &x)) {
-				if (curpar < sizeof(pars)/sizeof(pars[0]))
+				if (curpar < ARRAYSIZE(pars))
 					pars[curpar++] = x;
 				else
 					GP_LOG_E ("ignore superfluous argument %s/%x", (char*)xmlNodeGetContent(next), x);
@@ -1198,9 +1198,9 @@ is_outer_operation (PTPParams* params, uint16_t opcode) {
 
 	/* Do nothing here, either do stuff in senddata, getdata or getresp,
 	 * which will get the PTPContainer req too. */
-        for (i=0;i<params->outer_deviceinfo.OperationsSupported_len;i++)
-                if (params->outer_deviceinfo.OperationsSupported[i]==opcode)
-                        return TRUE;
+	for (i=0;i<params->outer_deviceinfo.Operations_len;i++)
+		if (params->outer_deviceinfo.Operations[i]==opcode)
+			return TRUE;
 	GP_LOG_D ("is_outer_operation %04x - is WRAPPED", opcode);
 	return FALSE;
 }
@@ -1211,8 +1211,8 @@ ums_wrap2_event_check (PTPParams* params, PTPContainer* req)
 	PTPContainer	ptp2;
 	int		res;
 	PTPObjectInfo	oi;
-        unsigned char	*resxml, *oidata = NULL;
-        uint32_t	size, newhandle;
+	unsigned char	*resxml, *oidata = NULL;
+	uint32_t	size, newhandle;
 	uint16_t	ret;
 	PTPParams	*outerparams = params->outer_params;
 	char		*evxml;
@@ -1252,9 +1252,9 @@ ums_wrap2_event_check (PTPParams* params, PTPContainer* req)
 		ret = ptp_getobject (outerparams, newhandle, (unsigned char**)&resxml);
 		if (ret != PTP_RC_OK)
 			return ret;
-		evxml = malloc (oi.ObjectCompressedSize + 1);
-		memcpy (evxml, resxml, oi.ObjectCompressedSize);
-		evxml[oi.ObjectCompressedSize] = 0x00;
+		evxml = malloc (oi.ObjectSize + 1);
+		memcpy (evxml, resxml, oi.ObjectSize);
+		evxml[oi.ObjectSize] = 0x00;
 
 		GP_LOG_D ("file content: %s", evxml);
 
@@ -1276,7 +1276,7 @@ ums_wrap2_event_check (PTPParams* params, PTPContainer* req)
 		oi.ObjectFormat		= PTP_OFC_Script;
 		oi.StorageID 		= 0x80000001;
 		oi.Filename 		= "HRSPONSE.X3C";
-		oi.ObjectCompressedSize	= strlen(evxml);
+		oi.ObjectSize		= strlen(evxml);
 		size = ptp_pack_OI(params, &oi, &oidata);
 		res = ptp_transaction (outerparams, &ptp2, PTP_DP_SENDDATA, size, &oidata, NULL);
 		if (res != PTP_RC_OK)

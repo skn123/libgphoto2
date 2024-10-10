@@ -41,8 +41,8 @@ static const struct camera_to_usb {
 	  unsigned short idProduct;
 } camera_to_usb[] = {
 	/* http://www.digitaldreamco.com/shop/xtra.htm, SVGA */
-      { "DigitalDream:l'espion xtra",   0x05DA, 0x1020 },
-      { "Che-ez!:Splash",   		0x0553, 0x1002 }
+	{ "DigitalDream:l'espion xtra",   0x05DA, 0x1020 },
+	{ "Che-ez!:Splash",   		0x0553, 0x1002 }
 
 };
 
@@ -55,57 +55,54 @@ int camera_id (CameraText *id)
 
 int camera_abilities (CameraAbilitiesList *list)
 {
-    CameraAbilities a;
-    unsigned int i;
+	CameraAbilities a;
+	unsigned int i;
 
-    for(i = 0;
-	i < (sizeof(camera_to_usb) / sizeof(struct camera_to_usb));
-	i++)
-    {
+	for (i = 0; i < (sizeof(camera_to_usb) / sizeof(struct camera_to_usb)); i++)
+	{
 
-	memset(&a, 0, sizeof(a));
-	strcpy(a.model, camera_to_usb[i].name);
+		memset(&a, 0, sizeof(a));
+		strcpy(a.model, camera_to_usb[i].name);
 
-	a.port			= GP_PORT_USB;
-	a.status		= GP_DRIVER_STATUS_EXPERIMENTAL;
-	a.operations		= GP_OPERATION_CAPTURE_IMAGE |
-				  GP_OPERATION_CAPTURE_PREVIEW;
-	a.file_operations	= GP_FILE_OPERATION_PREVIEW;
-	a.folder_operations	= GP_FOLDER_OPERATION_DELETE_ALL;
+		a.port			= GP_PORT_USB;
+		a.status		= GP_DRIVER_STATUS_EXPERIMENTAL;
+		a.operations		= GP_OPERATION_CAPTURE_IMAGE |
+					  GP_OPERATION_CAPTURE_PREVIEW;
+		a.file_operations	= GP_FILE_OPERATION_PREVIEW;
+		a.folder_operations	= GP_FOLDER_OPERATION_DELETE_ALL;
 
-	a.usb_vendor  = camera_to_usb[i].idVendor;
-	a.usb_product = camera_to_usb[i].idProduct;
+		a.usb_vendor  = camera_to_usb[i].idVendor;
+		a.usb_product = camera_to_usb[i].idProduct;
 
-	gp_abilities_list_append(list, a);
-    }
+		gp_abilities_list_append(list, a);
+	}
 
-    return (GP_OK);
+	return (GP_OK);
 }
 
 
 static int file_list_func (CameraFilesystem *fs, const char *folder,
 			   CameraList *list, void *data, GPContext *context)
 {
-    Camera *camera = data;
-    int count, result;
+	Camera *camera = data;
+	int count, result;
 
+	result = stv0674_file_count(camera->port, &count);
+	if (result < GP_OK)
+	{
+		GP_DEBUG("file count returned %d\n", result);
+		return result;
+	}
+	if (count > 10000) { /* arbitrary limit to avoid resource exhaustion by malicious USB */
+		GP_DEBUG("count %d is over 10000 arbitrary limit. Increase if needed.\n", count);
+		return GP_ERROR_CORRUPTED_DATA;
+	}
 
-    result = stv0674_file_count(camera->port, &count);
-    if (result < GP_OK)
-    {
-	GP_DEBUG("file count returned %d\n",result);
-	return result;
-    }
-    if (count > 10000) { /* arbitrary limit to avoid resource exhaustion by malicious USB */
-	GP_DEBUG("count %d is over 10000 arbitrary limit. Increase if needed.\n", count);
-	return GP_ERROR_CORRUPTED_DATA;
-    }
+	GP_DEBUG("count is %x\n", count);
 
-    GP_DEBUG("count is %x\n",count);
+	gp_list_populate(list, "image%03i.jpg", count);
 
-    gp_list_populate(list, "image%03i.jpg", count);
-
-    return (GP_OK);
+	return (GP_OK);
 }
 
 
@@ -159,8 +156,7 @@ static int camera_capture (Camera *camera, CameraCaptureType type, CameraFilePat
 	sprintf(path->name,"image%03i.jpg",count);
 
 	/* Tell the filesystem about it */
-	result = gp_filesystem_append (camera->fs, path->folder, path->name,
-				       context);
+	result = gp_filesystem_append (camera->fs, path->folder, path->name, context);
 	if (result < 0)
 		return (result);
 
@@ -200,7 +196,7 @@ static int
 delete_all_func (CameraFilesystem *fs, const char* folder, void *data,
 		 GPContext *context)
 {
-        Camera *camera = data;
+	Camera *camera = data;
 	if (strcmp (folder, "/"))
 		return (GP_ERROR_DIRECTORY_NOT_FOUND);
 	return stv0674_delete_all(camera->port);
@@ -214,38 +210,38 @@ static CameraFilesystemFuncs fsfuncs = {
 
 int camera_init (Camera *camera, GPContext *context)
 {
-    GPPortSettings settings;
-    int ret;
+	GPPortSettings settings;
+	int ret;
 
-    /* First, set up all the function pointers */
-    camera->functions->summary              = camera_summary;
-    camera->functions->about                = camera_about;
-    camera->functions->capture_preview	= camera_capture_preview;
-    camera->functions->capture		= camera_capture;
+	/* First, set up all the function pointers */
+	camera->functions->summary              = camera_summary;
+	camera->functions->about                = camera_about;
+	camera->functions->capture_preview	= camera_capture_preview;
+	camera->functions->capture		= camera_capture;
 
-    gp_port_get_settings(camera->port, &settings);
-    switch(camera->port->type) {
-    case GP_PORT_USB:
-	/* Modify the default settings the core parsed */
-	settings.usb.altsetting=1;/* we need to use interface 0 setting 1 */
-	settings.usb.inep=2;
-	settings.usb.intep=3;
-	settings.usb.outep=5;
+	gp_port_get_settings(camera->port, &settings);
+	switch (camera->port->type) {
+	case GP_PORT_USB:
+		/* Modify the default settings the core parsed */
+		settings.usb.altsetting=1;/* we need to use interface 0 setting 1 */
+		settings.usb.inep=2;
+		settings.usb.intep=3;
+		settings.usb.outep=5;
 
-	/* Use the defaults the core parsed */
-	break;
-    default:
-	return (GP_ERROR_UNKNOWN_PORT);
-	break;
-    }
+		/* Use the defaults the core parsed */
+		break;
+	default:
+		return (GP_ERROR_UNKNOWN_PORT);
+		break;
+	}
 
-    ret = gp_port_set_settings (camera->port, settings);
-    if (ret != GP_OK) {
-	gp_context_error (context, _("Could not apply USB settings"));
-	return ret;
-    }
-    /* Set up the filesystem */
-    gp_filesystem_set_funcs (camera->fs, &fsfuncs, camera);
-    /* test camera */
-    return stv0674_ping(camera->port);
+	ret = gp_port_set_settings (camera->port, settings);
+	if (ret != GP_OK) {
+		gp_context_error (context, _("Could not apply USB settings"));
+		return ret;
+	}
+	/* Set up the filesystem */
+	gp_filesystem_set_funcs (camera->fs, &fsfuncs, camera);
+	/* test camera */
+	return stv0674_ping(camera->port);
 }

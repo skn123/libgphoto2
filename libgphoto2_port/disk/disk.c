@@ -63,7 +63,7 @@ struct _GPPortPrivateLibrary {
 GPPortType
 gp_port_library_type (void)
 {
-        return GP_PORT_DISK;
+	return GP_PORT_DISK;
 }
 
 int
@@ -92,14 +92,14 @@ gp_port_library_list (GPPortInfoList *list)
 			    (NULL != strstr(mntent->mnt_fsname,"afs"))	||
 			    (NULL != strstr(mntent->mnt_fsname,"davfs"))||
 			    (NULL != strstr(mntent->mnt_fsname,"autofs"))||
-                            (NULL != strstr(mntent->mnt_fsname,"cgroup"))||
-                            (NULL != strstr(mntent->mnt_fsname,"systemd"))||
-                            (NULL != strstr(mntent->mnt_fsname,"mqueue"))||
-                            (NULL != strstr(mntent->mnt_fsname,"securityfs"))||
-                            (NULL != strstr(mntent->mnt_fsname,"proc"))||
-                            (NULL != strstr(mntent->mnt_fsname,"devtmpfs"))||
-                            (NULL != strstr(mntent->mnt_fsname,"devpts"))||
-                            (NULL != strstr(mntent->mnt_fsname,"sysfs"))||
+			    (NULL != strstr(mntent->mnt_fsname,"cgroup"))||
+			    (NULL != strstr(mntent->mnt_fsname,"systemd"))||
+			    (NULL != strstr(mntent->mnt_fsname,"mqueue"))||
+			    (NULL != strstr(mntent->mnt_fsname,"securityfs"))||
+			    (NULL != strstr(mntent->mnt_fsname,"proc"))||
+			    (NULL != strstr(mntent->mnt_fsname,"devtmpfs"))||
+			    (NULL != strstr(mntent->mnt_fsname,"devpts"))||
+			    (NULL != strstr(mntent->mnt_fsname,"sysfs"))||
 			    (NULL != strstr(mntent->mnt_fsname,"gphotofs"))||
 			/* fstype based */
 			    (NULL != strstr(mntent->mnt_type,"autofs"))	||
@@ -132,15 +132,13 @@ gp_port_library_list (GPPortInfoList *list)
 				if (-1 == stat(path, &stbuf))
 					continue;
 			}
-			s = malloc (strlen(_("Media '%s'"))+strlen(mntent->mnt_fsname)+1);
-			sprintf (s, _("Media '%s'"), mntent->mnt_fsname);
+			s = aprintf (_("Media '%s'"), mntent->mnt_fsname);
 			gp_port_info_new (&info);
 			gp_port_info_set_type (info, GP_PORT_DISK);
 			gp_port_info_set_name (info, s);
 			free (s);
 
-			s = malloc (strlen("disk:")+strlen(mntent->mnt_dir)+1);
-			sprintf (s, "disk:%s", mntent->mnt_dir);
+			s = aprintf ("disk:%s", mntent->mnt_dir);
 			gp_port_info_set_path (info, s);
 			if (gp_port_info_list_lookup_path (list, s) >= GP_OK) {
 				free (s);
@@ -166,14 +164,14 @@ gp_port_library_list (GPPortInfoList *list)
 			    (NULL != strstr(mntent->mnt_fsname,"afs"))	||
 			    (NULL != strstr(mntent->mnt_fsname,"autofs"))||
 			    (NULL != strstr(mntent->mnt_fsname,"davfs"))||
-                            (NULL != strstr(mntent->mnt_fsname,"cgroup"))||
-                            (NULL != strstr(mntent->mnt_fsname,"systemd"))||
-                            (NULL != strstr(mntent->mnt_fsname,"mqueue"))||
-                            (NULL != strstr(mntent->mnt_fsname,"securityfs"))||
-                            (NULL != strstr(mntent->mnt_fsname,"proc"))||
-                            (NULL != strstr(mntent->mnt_fsname,"devtmpfs"))||
-                            (NULL != strstr(mntent->mnt_fsname,"devpts"))||
-                            (NULL != strstr(mntent->mnt_fsname,"sysfs"))||
+			    (NULL != strstr(mntent->mnt_fsname,"cgroup"))||
+			    (NULL != strstr(mntent->mnt_fsname,"systemd"))||
+			    (NULL != strstr(mntent->mnt_fsname,"mqueue"))||
+			    (NULL != strstr(mntent->mnt_fsname,"securityfs"))||
+			    (NULL != strstr(mntent->mnt_fsname,"proc"))||
+			    (NULL != strstr(mntent->mnt_fsname,"devtmpfs"))||
+			    (NULL != strstr(mntent->mnt_fsname,"devpts"))||
+			    (NULL != strstr(mntent->mnt_fsname,"sysfs"))||
 			    (NULL != strstr(mntent->mnt_fsname,"gphotofs"))||
 			/* fstype based */
 			    (NULL != strstr(mntent->mnt_type,"autofs"))	||
@@ -213,13 +211,11 @@ gp_port_library_list (GPPortInfoList *list)
 			}
 			gp_port_info_new (&info);
 			gp_port_info_set_type (info, GP_PORT_DISK);
-			s = malloc (strlen(_("Media '%s'"))+strlen(mntent->mnt_fsname)+1);
-			sprintf (s, _("Media '%s'"),  mntent->mnt_fsname);
+			s = aprintf (_("Media '%s'"),  mntent->mnt_fsname);
 			gp_port_info_set_name (info, s);
 			free (s);
 
-			s = malloc (strlen("disk:")+strlen(mntent->mnt_dir)+1);
-			sprintf (s, "disk:%s", mntent->mnt_dir);
+			s = aprintf ("disk:%s", mntent->mnt_dir);
 			gp_port_info_set_path (info, s);
 			if (gp_port_info_list_lookup_path (list, s) >= GP_OK) {
 				free (s);
@@ -327,13 +323,13 @@ gp_port_disk_close (GPPort *port)
 static int
 gp_port_disk_write (GPPort *port, const char *bytes, int size)
 {
-        return GP_OK;
+	return GP_OK;
 }
 
 static int
 gp_port_disk_read(GPPort *port, char *bytes, int size)
 {
-        return GP_OK;
+	return GP_OK;
 }
 
 GPPortOperations *

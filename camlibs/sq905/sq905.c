@@ -61,7 +61,7 @@ sq_init (GPPort *port, CameraPrivateLibrary *priv)
 	if (!catalog) return GP_ERROR_NO_MEMORY;
 
 	sq_reset (port);
-    	sq_access_reg(port, ID);	/* Access model or chip id */
+	sq_access_reg(port, ID);	/* Access model or chip id */
 
 	sq_read_data (port, c, 4);
 	sq_reset (port);
@@ -203,7 +203,7 @@ sq_reset (GPPort *port)
 {
 	sq_access_reg(port, CLEAR);	/* Release current register */
 
-    	return GP_OK;
+	return GP_OK;
 }
 
 int
@@ -217,10 +217,10 @@ sq_read_picture_data (GPPort *port, unsigned char *data, int size )
 		sq_read_data (port, data + offset, 0x8000);
 		offset = offset + 0x8000;
 	}
- 	sq_read_data (port, data + offset, remainder);
+	sq_read_data (port, data + offset, remainder);
 
-    	SQWRITE (port, 0x0c, 0xc0, 0x00, &c, 1);
-    	return GP_OK;
+	SQWRITE (port, 0x0c, 0xc0, 0x00, &c, 1);
+	return GP_OK;
 }
 
 int
@@ -239,7 +239,7 @@ sq_delete_all (GPPort *port, CameraPrivateLibrary *priv)
 	default:
 		return (GP_ERROR_NOT_SUPPORTED);
 	}
-    	return GP_OK;
+	return GP_OK;
 }
 
 int
@@ -254,25 +254,25 @@ sq_preprocess (SQModel model, int comp_ratio, unsigned char is_in_clip,
 
 	if (!is_in_clip) {
 		/* Turning the picture right-side up. */
-    		for (i = 0; i < b/2; ++i) {
-        		temp = data[i];
-        		data[i] = data[b -1 -i];
-        		data[b - 1 - i] = temp;
-    		}
+		for (i = 0; i < b/2; ++i) {
+			temp = data[i];
+			data[i] = data[b -1 -i];
+			data[b - 1 - i] = temp;
+		}
 		/* But clip frames are already right-side-up */
-    	}
+	}
 	/*
 	 * POCK_CAM needs de-mirror-imaging, too. But if a photo is
 	 * compressed we de-mirror after decompression, so not here.
 	 */
 	if ((model == SQ_MODEL_POCK_CAM) && (comp_ratio == 1)) {
-    		for (i = 0; i < h; i++) {
-			for (m = 0 ; m < w/2; m++) {
-        			temp = data[w*i +m];
+		for (i = 0; i < h; i++) {
+			for (m = 0; m < w/2; m++) {
+				temp = data[w*i +m];
 				data[w*i + m] = data[w*i + w -1 -m];
 				data[w*i + w - 1 - m] = temp;
 			}
-    		}
+		}
 	}
 	return GP_OK;
 }

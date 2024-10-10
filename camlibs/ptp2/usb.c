@@ -64,10 +64,6 @@
 /* 100 is not enough for various cameras types. 150 seems to work better */
 #define PTP2_FAST_TIMEOUT       150
 
-/* Pack / unpack functions */
-
-#include "ptp-pack.c"
-
 /* send / receive functions */
 
 uint16_t
@@ -265,7 +261,7 @@ ptp_usb_getdata (PTPParams* params, PTPContainer* ptp, PTPDataHandler *handler)
 	uint16_t ret;
 	PTPUSBBulkContainer usbdata;
 	unsigned char	*data = NULL;
-	uint32_t	bytes_to_read, bytes_read;
+	uint32_t	bytes_to_read = 0, bytes_read = 0;
 	Camera		*camera = ((PTPData *)params->data)->camera;
 	int		report_progress, progress_id = 0, do_retry = TRUE, res = GP_OK;
 	GPContext *context = ((PTPData *)params->data)->context;

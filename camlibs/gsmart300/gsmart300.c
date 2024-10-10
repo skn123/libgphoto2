@@ -161,8 +161,7 @@ gsmart300_request_file (CameraPrivateLibrary * lib, CameraFile *file,
 	if (!mybuf)
 		return GP_ERROR_NO_MEMORY;
 
-	ret = gsmart300_download_data (lib, __GS300_PIC, g_file->index,
-				        flash_size, mybuf);
+	ret = gsmart300_download_data (lib, __GS300_PIC, g_file->index, flash_size, mybuf);
 	if (ret < GP_OK) {
 		free (mybuf);
 		return ret;
@@ -258,8 +257,7 @@ gsmart300_get_image_thumbnail (CameraPrivateLibrary * lib, CameraFile *file,
 	mybuf = malloc (size);
 	if (!mybuf)
 		return (GP_ERROR_NO_MEMORY);
-	ret = gsmart300_download_data (lib, __GS300_THUMB, g_file->index,
-				        size, mybuf);
+	ret = gsmart300_download_data (lib, __GS300_THUMB, g_file->index, size, mybuf);
 	if (ret < GP_OK) {
 		free (mybuf);
 		return ret;
@@ -379,7 +377,6 @@ gsmart300_get_FATs (CameraPrivateLibrary * lib)
 	int index = 0;
 	unsigned int file_index = 0;
 	uint8_t *p = NULL;
-	char buf[14];
 
 	CHECK (gsmart300_get_file_count(lib));
 
@@ -394,20 +391,17 @@ gsmart300_get_FATs (CameraPrivateLibrary * lib)
 	p = lib->fats;
 
 	while (index < lib->num_files) {
-		CHECK (gsmart300_download_data (lib, __GS300_FAT, index,
-					        FLASH_PAGE_SIZE_300, p));
+		CHECK (gsmart300_download_data (lib, __GS300_FAT, index, FLASH_PAGE_SIZE_300, p));
 		if (p[0] == 0xFF)
 			break;
 		type = p[0];
 		if (type == 0x00) {
-			snprintf (buf, 13, "Image%03d.jpg", index + 1);
-			lib->files[file_index].mime_type =
-				GSMART_FILE_TYPE_IMAGE;
+			lib->files[file_index].mime_type = GSMART_FILE_TYPE_IMAGE;
 			lib->files[file_index].index = index;
 			lib->files[file_index].fat = p;
 			lib->files[file_index].width = (p[8] & 0xFF) * 16;
 			lib->files[file_index].height = (p[9] & 0xFF) * 16;
-			lib->files[file_index].name = strdup (buf);
+			lib->files[file_index].name = aprintf ("Image%03d.jpg", index + 1);
 			file_index++;
 		}
 

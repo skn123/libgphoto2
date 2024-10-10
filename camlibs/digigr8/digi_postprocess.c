@@ -40,7 +40,7 @@
 
 static int
 digi_first_decompress (unsigned char *output, unsigned char *input,
-					    unsigned int outputsize)
+			unsigned int outputsize)
 {
 	unsigned char parity = 0;
 	unsigned char nibble_to_keep[2];
@@ -53,18 +53,18 @@ digi_first_decompress (unsigned char *output, unsigned char *input,
 	unsigned int bit_counter = 8;
 	unsigned int cycles = 0;
 	int table[9] = { -1, 0, 2, 6, 0x0e, 0x0e, 0x0e, 0x0e, 0xfb};
-	unsigned char lookup_table[16]
-		     ={0, 2, 6, 0x0e, 0xf0, 0xf1, 0xf2, 0xf3, 0xf4,
-		           0xf5, 0xf6, 0xf7, 0xf8, 0xf9, 0xfa, 0xfb};
+	unsigned char lookup_table[16] =
+		{0, 2, 6, 0x0e, 0xf0, 0xf1, 0xf2, 0xf3, 0xf4,
+		 0xf5, 0xf6, 0xf7, 0xf8, 0xf9, 0xfa, 0xfb};
 	unsigned char translator[16] =
-		    {8, 7, 9, 6, 10, 11, 12, 13, 14, 15, 5, 4, 3, 2, 1, 0};
+		{8, 7, 9, 6, 10, 11, 12, 13, 14, 15, 5, 4, 3, 2, 1, 0};
 
 	GP_DEBUG ("Running first_decompress.\n");
 	nibble_to_keep[0] = 0;
 	nibble_to_keep[1] = 0;
 
-        while (bytes_done < outputsize) {
-        	while (parity < 2 ) {
+	while (bytes_done < outputsize) {
+		while (parity < 2 ) {
 			while ( lookup > table[cycles]) {
 				if (bit_counter == 8) {
 					input_byte = input[bytes_used];
@@ -111,7 +111,7 @@ digi_first_decompress (unsigned char *output, unsigned char *input,
 
 static int
 digi_second_decompress (unsigned char *uncomp, unsigned char *in,
-						    int width, int height)
+			int width, int height)
 {
 	int diff = 0;
 	int tempval = 0;
@@ -129,7 +129,7 @@ digi_second_decompress (unsigned char *uncomp, unsigned char *in,
 		return GP_ERROR_NO_MEMORY;
 	}
 	for(i=0; i < width; i++)
-	    templine_red[i] = 0x80;
+		templine_red[i] = 0x80;
 
 	templine_green = malloc(width);
 	if (!templine_green) {
@@ -161,8 +161,8 @@ digi_second_decompress (unsigned char *uncomp, unsigned char *in,
 				tempval = templine_red[0] + diff;
 			else
 				tempval = (templine_red[i]
-				    + uncomp[2 *m * width + 2 * i - 2]) / 2
-								    + diff;
+					+ uncomp[2 *m * width + 2 * i - 2]) / 2
+					+ diff;
 			tempval = MIN(tempval, 0xff);
 			tempval = MAX(tempval, 0);
 			uncomp[2 * m * width + 2 * i] = tempval;
@@ -173,12 +173,12 @@ digi_second_decompress (unsigned char *uncomp, unsigned char *in,
 				tempval = templine_green[1] + diff;
 			else if (2 * i == width - 2 )
 				tempval = (templine_green[i]
-				    + uncomp[2 * m * width + 2 * i -1]) / 2
-								    + diff;
+					+ uncomp[2 * m * width + 2 * i -1]) / 2
+					+ diff;
 			else
 				tempval = (templine_green[i + 1]
-				    + uncomp[2 * m * width + 2 * i - 1]) / 2
-								    + diff;
+					+ uncomp[2 * m * width + 2 * i - 1]) / 2
+					+ diff;
 			tempval = MIN(tempval, 0xff);
 			tempval = MAX(tempval, 0);
 			uncomp[2 * m * width + 2 * i + 1] = tempval;
@@ -195,8 +195,8 @@ digi_second_decompress (unsigned char *uncomp, unsigned char *in,
 				tempval = templine_green[0] + diff;
 			else
 				tempval = (templine_green[i]
-				    + uncomp[(2 * m + 1) * width
-						+ 2 * i - 2]) / 2 + diff;
+					+ uncomp[(2 * m + 1) * width
+					+ 2 * i - 2]) / 2 + diff;
 			tempval = MIN(tempval, 0xff);
 			tempval = MAX(tempval, 0);
 			uncomp[(2 * m + 1) * width + 2 * i] = tempval;
@@ -207,8 +207,8 @@ digi_second_decompress (unsigned char *uncomp, unsigned char *in,
 				tempval = templine_blue[0] + diff;
 			else
 				tempval = (templine_blue[i]
-				    + uncomp[(2 * m + 1) * width
-						+ 2 * i - 1]) / 2 + diff;
+					+ uncomp[(2 * m + 1) * width
+					+ 2 * i - 1]) / 2 + diff;
 			tempval = MIN(tempval, 0xff);
 			tempval = MAX(tempval, 0);
 			uncomp[(2 * m + 1) * width + 2 * i + 1] = tempval;
@@ -331,7 +331,7 @@ digi_postprocess(int width, int height,
 
 static int
 histogram (unsigned char *data, unsigned int size, int *htable_r,
-					    int *htable_g, int *htable_b)
+		int *htable_g, int *htable_b)
 {
 	unsigned int x;
 	/* Initializations */

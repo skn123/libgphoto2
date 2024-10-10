@@ -509,7 +509,7 @@ pdc700_info (Camera *camera, PDCInfo *info, GPContext *context)
 	 * 01 20 .. 02
 	 */
 
- 	info->memory = buf[2];
+	info->memory = buf[2];
 
 	/* Power source state (make sure it's valid) */
 	info->ac_power = buf[4];
@@ -518,7 +518,7 @@ pdc700_info (Camera *camera, PDCInfo *info, GPContext *context)
 		info->ac_power = PDC_BOOL_OFF;
 	}
 
- 	info->auto_poweroff = buf[5];
+	info->auto_poweroff = buf[5];
 
 	/* Mode (make sure we know it) */
 	info->mode = buf[6];
@@ -636,16 +636,16 @@ pdc700_set_date (Camera *camera, time_t time, GPContext *context)
 static int
 pdc700_capture (Camera *camera, GPContext *context)
 {
-        unsigned char cmd[5], buf[1024];
-        unsigned int buf_len = 0;
+	unsigned char cmd[5], buf[1024];
+	unsigned int buf_len = 0;
 	int r = 0;
 	int try;
 	PDCInfo info;
 
-        cmd[3] = PDC700_CAPTURE;
+	cmd[3] = PDC700_CAPTURE;
 	cmd[4] = 0;
 
-        CR (pdc700_transmit (camera, cmd, 5, buf, &buf_len, context));
+	CR (pdc700_transmit (camera, cmd, 5, buf, &buf_len, context));
 
 	/*
 	 * This is rather hackish.  The camera needs a little time to recover
@@ -654,10 +654,10 @@ pdc700_capture (Camera *camera, GPContext *context)
 	 * I'm leaving this ugly-but-works junk here for now.
 	 */
 	for (try = 0; try < 10; try++)
-	  if ((r = pdc700_info(camera, &info, context)) == GP_OK)
-	    break;
+		if ((r = pdc700_info(camera, &info, context)) == GP_OK)
+			break;
 
-        return r;
+	return r;
 };
 
 static int
@@ -746,7 +746,7 @@ camera_abilities (CameraAbilitiesList *list)
 		a.speed[3] = 57600;
 		a.speed[4] = 115200;
 		a.operations        = GP_OPERATION_CAPTURE_IMAGE |
-                                      GP_OPERATION_CONFIG;
+		                      GP_OPERATION_CONFIG;
 		a.file_operations   = GP_FILE_OPERATION_DELETE |
 		                      GP_FILE_OPERATION_PREVIEW;
 		a.folder_operations = GP_FOLDER_OPERATION_DELETE_ALL;
@@ -1015,7 +1015,7 @@ static int
 which_radio_button (CameraWidget *window, const char *label,
 		    const char * const *opt)
 {
-  	CameraWidget *child;
+	CameraWidget *child;
 	int i;
 	const char *value;
 
@@ -1038,7 +1038,7 @@ which_radio_button (CameraWidget *window, const char *label,
 static int
 camera_set_config (Camera *camera, CameraWidget *window, GPContext *context)
 {
-  	CameraWidget *child;
+	CameraWidget *child;
 	int i = 0, r;
 	float range;
 
@@ -1182,10 +1182,10 @@ camera_init (Camera *camera, GPContext *context)
 	GPPortSettings settings;
 	int speeds[] = {115200, 9600, 57600, 19200, 38400};
 
-        /* First, set up all the function pointers */
+	/* First, set up all the function pointers */
 	camera->functions->capture = camera_capture;
 	camera->functions->summary = camera_summary;
-        camera->functions->about   = camera_about;
+	camera->functions->about   = camera_about;
 	camera->functions->get_config = camera_get_config;
 	camera->functions->set_config = camera_set_config;
 

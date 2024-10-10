@@ -136,10 +136,10 @@ static int
 delete_all_func (CameraFilesystem *fs, const char* folder, void *data,
 		 GPContext *context)
 {
-    Camera *camera = data;
-    if (strcmp (folder, "/"))
-	return (GP_ERROR_DIRECTORY_NOT_FOUND);
-    return jd11_erase_all(camera->port);
+	Camera *camera = data;
+	if (strcmp (folder, "/"))
+		return (GP_ERROR_DIRECTORY_NOT_FOUND);
+	return jd11_erase_all(camera->port);
 }
 
 static int camera_manual (Camera *camera, CameraText *manual, GPContext *context)
@@ -179,7 +179,7 @@ static int camera_config_get (Camera *camera, CameraWidget **window,
 	gp_widget_set_name (section, "othersettings");
 	gp_widget_append (*window, section);
 
-       /* Bulb Exposure Time */
+	/* Bulb Exposure Time */
 	gp_widget_new (GP_WIDGET_RANGE, _("Bulb Exposure Time"), &widget);
 	gp_widget_set_name (widget, "exposuretime");
 	gp_widget_append (section, widget);
@@ -194,7 +194,7 @@ static int camera_config_get (Camera *camera, CameraWidget **window,
 
 	ret = jd11_get_rgb(camera->port,&red,&green,&blue);
 	if (ret < GP_OK)
-	    return ret;
+		return ret;
 	gp_widget_new (GP_WIDGET_RANGE, _("Red"), &widget);
 	gp_widget_append (section, widget);
 	gp_widget_set_name (widget, "red");
@@ -235,7 +235,7 @@ static int camera_config_set (Camera *camera, CameraWidget *window,
 		gp_widget_set_changed (widget, 0);
 		ret = jd11_set_bulb_exposure(camera->port,(int)f);
 		if (ret < GP_OK)
-		    return ret;
+			return ret;
 	}
 
 	gp_widget_get_child_by_label (window, _("Color Settings"), &section);
@@ -260,7 +260,7 @@ static int camera_config_set (Camera *camera, CameraWidget *window,
 
 	ret = GP_OK;
 	if (changed)
-	    ret =jd11_set_rgb(camera->port,red,green,blue);
+		ret =jd11_set_rgb(camera->port, red, green, blue);
 	return ret;
 
 }
@@ -273,25 +273,25 @@ static CameraFilesystemFuncs fsfuncs = {
 
 int camera_init (Camera *camera, GPContext *context)
 {
-        gp_port_settings settings;
+	gp_port_settings settings;
 
-        /* First, set up all the function pointers */
-        camera->functions->manual	= camera_manual;
-        camera->functions->about	= camera_about;
+	/* First, set up all the function pointers */
+	camera->functions->manual	= camera_manual;
+	camera->functions->about	= camera_about;
 	camera->functions->get_config	= camera_config_get;
 	camera->functions->set_config	= camera_config_set;
 
-        /* Configure port */
-        gp_port_set_timeout(camera->port, 1000);
+	/* Configure port */
+	gp_port_set_timeout(camera->port, 1000);
 	gp_port_get_settings(camera->port, &settings);
-        settings.serial.speed	= 115200;
-        settings.serial.bits	= 8;
-        settings.serial.parity	= 0;
-        settings.serial.stopbits= 1;
-        gp_port_set_settings(camera->port, settings);
+	settings.serial.speed	= 115200;
+	settings.serial.bits	= 8;
+	settings.serial.parity	= 0;
+	settings.serial.stopbits= 1;
+	gp_port_set_settings(camera->port, settings);
 
 	/* Set up the filesystem */
 	gp_filesystem_set_funcs(camera->fs, &fsfuncs, camera);
-        /* test camera */
-        return jd11_ping(camera->port);
+	/* test camera */
+	return jd11_ping(camera->port);
 }
